@@ -1,0 +1,20 @@
+{
+  "name": "la-meme",
+  "version": "0.0.1",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/la-meme/la-meme.git"
+  },
+  "author": "Josh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/la-meme/la-meme/issues"
+  },
+  "homepage": "https://github.com/la-meme/la-meme#readme"
+}
