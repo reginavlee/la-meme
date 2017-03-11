@@ -11,7 +11,7 @@ const path = require('path');
 // Build directory is where the bundle file will be placed
 const BUILD_DIR = path.resolve(__dirname, 'client/dist');
 // App directory is where all of your raw JSX files will be placed
-const APP_DIR = path.resolve(__dirname, 'client/src');
+const APP_DIR = path.resolve(__dirname, `client/src`);
 
 // The files in the app directory will get transpiled and packaged into one
 // file, bundle.js, which will get saved in the BUILD_DIR. 
@@ -21,7 +21,7 @@ const APP_DIR = path.resolve(__dirname, 'client/src');
 // While developing your app in react, you'll want to have two terminal tabs open - 
 // one that is running `npm run dev-react` and one that is running `npm start`
 const config = {
-  entry: APP_DIR + '/index.jsx',
+  entry: `${APP_DIR}/index.jsx`,
   module: {
     loaders: [
       {
@@ -30,18 +30,21 @@ const config = {
         exclude: /node_modules/,
         loader: 'babel-loader',
         query: {
-          presets: ['es2015', 'react']
+          presets: ['es2015', 'react'],
         }
       },
       {
         test: /\.css$/,
-        loaders: ['style-loader', 'css-loader']
+        loader: 'style-loader'
       }
     ]
   },
   output: {
     path: BUILD_DIR,
     filename: 'bundle.js'
+  },
+  resolve: {
+    extensions: ['.js', '.jsx'],
   }
 };
 

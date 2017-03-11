@@ -1,6 +1,13 @@
-const mongoose = require('mongoose');
-const mongoUri = 'mongodb://localhost/lameme';
+const Sequelize = require('sequelize');
 
-const db = mongoose.createConnection(mongoUri);
+const db = new Sequelize('lameme', 'root', '', {
+  host: 'localhost',
+  dialect: 'mysql',
+  pool: {
+    max: 10,
+    min: 0,
+    idle: 10000,
+  },
+});
 
 module.exports = db;

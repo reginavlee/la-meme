@@ -1,13 +1,19 @@
 import React, { Component } from 'react';
-import { Navbar, NavItem, MenuItem, NavDropdown, Nav } from 'react-bootstrap';
+import { Navbar } from 'react-bootstrap';
+import { Link } from 'react-router';
 
 class Navigation extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+    };
+  }
   render() {
     return (
       <Navbar inverse>
         <Navbar.Header>
           <Navbar.Brand>
-            <a href="#">la même</a>
+            <Link to="#">la même</Link>
           </Navbar.Brand>
         </Navbar.Header>
       </Navbar>
