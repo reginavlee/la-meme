@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const controller = require('./app/controllers/index');
-const socketController = require('./app/controllers/socketController');
+// const socketController = require('./app/controllers/socketController');
 
 /*
  * {Client} Routes
@@ -9,7 +9,7 @@ router.get('/users', controller.users.get);
 router.post('/users', controller.users.post);
 
 router.get('/users/:id', controller.users.getById);
-router.post('/join/:roomId', socketController.joinRoom);
+// router.post('/join/:roomId', socketController.joinRoom);
 
 /*
  * {Meme} API Routes

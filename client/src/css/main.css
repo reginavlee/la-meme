@@ -3,3 +3,7 @@
 .container-fluid {  
   padding: 0px;
 }
+
+.meme-content {
+  height: 600px;
+}
