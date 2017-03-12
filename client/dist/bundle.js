@@ -22943,12 +22943,6 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactRouter = __webpack_require__(58);
 
-var _reactBootstrap = __webpack_require__(126);
-
-var _socket = __webpack_require__(525);
-
-var _socket2 = _interopRequireDefault(_socket);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -22956,8 +22950,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var socket = (0, _socket2.default)('http://localhost:3000');
 
 var Home = function (_Component) {
   _inherits(Home, _Component);
@@ -22973,15 +22965,7 @@ var Home = function (_Component) {
 
   _createClass(Home, [{
     key: 'componentDidMount',
-    value: function componentDidMount() {
-      console.log(socket);
-    }
-  }, {
-    key: 'createRoom',
-    value: function createRoom() {
-      var room = 'testRoom';
-      socket.emit('newRoom', room);
-    }
+    value: function componentDidMount() {}
   }, {
     key: 'render',
     value: function render() {
@@ -22997,11 +22981,6 @@ var Home = function (_Component) {
           _reactRouter.Link,
           { to: 'dashboard' },
           'This takes you to dashboard page'
-        ),
-        _react2.default.createElement(
-          _reactBootstrap.Button,
-          { bsStyle: 'primary', onClick: this.createRoom },
-          ' Click'
         )
       );
     }
@@ -23031,6 +23010,20 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactRouter = __webpack_require__(58);
 
+var _reactBootstrap = __webpack_require__(126);
+
+var _socket = __webpack_require__(525);
+
+var _socket2 = _interopRequireDefault(_socket);
+
+var _genRandomString = __webpack_require__(541);
+
+var _genRandomString2 = _interopRequireDefault(_genRandomString);
+
+var _GameDisplay = __webpack_require__(542);
+
+var _GameDisplay2 = _interopRequireDefault(_GameDisplay);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -23047,25 +23040,153 @@ var Game = function (_Component) {
 
     var _this = _possibleConstructorReturn(this, (Game.__proto__ || Object.getPrototypeOf(Game)).call(this, props));
 
-    _this.state = {};
+    var token = (0, _genRandomString2.default)();
+    _this.state = {
+      user: {
+        authToken: token,
+        username: 'Jahosh' + token,
+        currentRoom: ''
+      }
+    };
+    _this.emitMessage = _this.emitMessage.bind(_this);
     return _this;
   }
+  /**
+   * fire off socket connection on component mounting
+   */
+
 
   _createClass(Game, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      /* initialize client socket connection */
+      this.socket = (0, _socket2.default)('http://localhost:3000');
+      this.createUser();
+      this.createRoom();
+      this.renderMessage();
+      this.RoomOccupancy();
+    }
+    /**
+     * removes a user from the users storage on unmounting
+     */
+
+  }, {
+    key: 'componentWillUnmount',
+    value: function componentWillUnmount() {
+      this.removeUser();
+    }
+    /**
+     * create a user on the server using Auth0 token
+     */
+
+  }, {
+    key: 'createUser',
+    value: function createUser() {
+      this.socket.emit('create-user', this.state.user);
+    }
+  }, {
+    key: 'createRoom',
+    value: function createRoom() {
+      var self = this;
+      this.socket.emit('create-room', 'testRoom');
+      this.socket.on('join', function (roomname) {
+        console.log('joined room');
+        self.setState({
+          currentRoom: roomname
+        });
+      });
+    }
+  }, {
+    key: 'RoomOccupancy',
+    value: function RoomOccupancy() {
+      var _this2 = this;
+
+      this.socket.on('occupacy', function (RoomOccupancy) {
+        console.log(RoomOccupancy);
+        _this2.setState({
+          roomCount: RoomOccupancy
+        });
+      });
+    }
+  }, {
+    key: 'removeUser',
+    value: function removeUser() {
+      this.socket.emit('forceDisconnect', this.state.user);
+    }
+  }, {
+    key: 'emitMessage',
+    value: function emitMessage(message) {
+      var user = this.state.user.username;
+      var payload = {
+        user: user,
+        message: message
+      };
+      this.socket.emit('chat-message', payload);
+    }
+  }, {
+    key: 'renderMessage',
+    value: function renderMessage() {
+      this.socket.on('new-message', function (data) {
+        console.log('from renderMessage', data);
+        document.getElementById('messages').innerHTML += '<li>' + data.message + '</li>';
+      });
+    }
+  }, {
     key: 'render',
     value: function render() {
       return _react2.default.createElement(
-        'div',
+        _reactBootstrap.Grid,
         null,
         _react2.default.createElement(
-          'h1',
-          null,
-          'Game Stuff here!'
+          _reactBootstrap.Row,
+          { className: 'game-board-header-content' },
+          _react2.default.createElement(
+            _reactBootstrap.Col,
+            { xs: 4, xsOffset: 5, md: 4, mdOffset: 5 },
+            _react2.default.createElement(
+              'h1',
+              null,
+              'la m\xEAme'
+            ),
+            _react2.default.createElement(
+              'p',
+              null,
+              'Counter will go here'
+            ),
+            _react2.default.createElement(
+              'h2',
+              null,
+              this.state.currentRoom
+            ),
+            _react2.default.createElement(
+              'h3',
+              null,
+              ' currentUsers in Room: ',
+              _react2.default.createElement(
+                'small',
+                null,
+                ' ',
+                this.state.roomCount,
+                ' '
+              ),
+              ' '
+            ),
+            _react2.default.createElement('br', null),
+            _react2.default.createElement(
+              _reactRouter.Link,
+              { to: '/' },
+              'This takes you to home page'
+            )
+          )
         ),
         _react2.default.createElement(
-          _reactRouter.Link,
-          { to: '/' },
-          'This takes you to home page'
+          _reactBootstrap.Row,
+          { className: 'game-board' },
+          _react2.default.createElement(
+            _reactBootstrap.Col,
+            { xs: 12, md: 12 },
+            _react2.default.createElement(_GameDisplay2.default, { handleMessage: this.emitMessage })
+          )
         )
       );
     }
@@ -53199,6 +53320,199 @@ _reactDom2.default.render(_react2.default.createElement(
     _react2.default.createElement(_reactRouter.Route, { path: '/play', component: _MemeRoom2.default })
   )
 ), document.getElementById('app'));
+
+/***/ }),
+/* 541 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/**
+ * Generates a random authToken (used for testing
+ */
+const genRandomString = () => Math.floor(Math.random() * 1000000000).toString();
+
+/* harmony default export */ __webpack_exports__["default"] = genRandomString;
+
+
+/***/ }),
+/* 542 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactBootstrap = __webpack_require__(126);
+
+var _GameInput = __webpack_require__(543);
+
+var _GameInput2 = _interopRequireDefault(_GameInput);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var GameDisplay = function (_Component) {
+  _inherits(GameDisplay, _Component);
+
+  function GameDisplay(props) {
+    _classCallCheck(this, GameDisplay);
+
+    var _this = _possibleConstructorReturn(this, (GameDisplay.__proto__ || Object.getPrototypeOf(GameDisplay)).call(this, props));
+
+    _this.state = {};
+    return _this;
+  }
+
+  _createClass(GameDisplay, [{
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement(
+        'div',
+        null,
+        _react2.default.createElement(
+          _reactBootstrap.Well,
+          { className: 'meme-content', bsSize: 'large' },
+          _react2.default.createElement('ul', { id: 'messages' })
+        ),
+        _react2.default.createElement(_GameInput2.default, { handleMessage: this.props.handleMessage })
+      );
+    }
+  }]);
+
+  return GameDisplay;
+}(_react.Component);
+
+exports.default = GameDisplay;
+
+/***/ }),
+/* 543 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactBootstrap = __webpack_require__(126);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var GameInput = function (_Component) {
+  _inherits(GameInput, _Component);
+
+  function GameInput(props) {
+    _classCallCheck(this, GameInput);
+
+    var _this = _possibleConstructorReturn(this, (GameInput.__proto__ || Object.getPrototypeOf(GameInput)).call(this, props));
+
+    _this.state = {
+      value: ''
+    };
+    _this.handleInputChange = _this.handleInputChange.bind(_this);
+    _this.handleSubmit = _this.handleSubmit.bind(_this);
+    return _this;
+  }
+
+  _createClass(GameInput, [{
+    key: 'handleInputChange',
+    value: function handleInputChange(e) {
+      var value = e.target.value;
+      this.setState({
+        value: value
+      });
+    }
+  }, {
+    key: 'handleSubmit',
+    value: function handleSubmit(e) {
+      e.preventDefault();
+      var message = this.state.value;
+      this.props.handleMessage(message);
+      this.setState({
+        value: ''
+      });
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement(
+        _reactBootstrap.Form,
+        { onSubmit: this.handleSubmit },
+        _react2.default.createElement(
+          _reactBootstrap.FormGroup,
+          { bsSize: 'large' },
+          _react2.default.createElement(
+            _reactBootstrap.InputGroup,
+            null,
+            _react2.default.createElement(_reactBootstrap.FormControl, {
+              onChange: this.handleInputChange,
+              value: this.state.value,
+              type: 'text',
+              placeholder: '...'
+            }),
+            _react2.default.createElement(
+              _reactBootstrap.DropdownButton,
+              {
+                bsStyle: 'primary',
+                bsSize: 'large',
+                componentClass: _reactBootstrap.InputGroup.Button,
+                id: 'meme-input-dropdown',
+                title: 'Actions'
+              },
+              _react2.default.createElement(
+                _reactBootstrap.MenuItem,
+                { key: '3' },
+                'Clear'
+              ),
+              _react2.default.createElement(
+                _reactBootstrap.MenuItem,
+                { key: '1' },
+                'Save'
+              ),
+              _react2.default.createElement(
+                _reactBootstrap.MenuItem,
+                { key: '2' },
+                'Quit'
+              )
+            )
+          )
+        )
+      );
+    }
+  }]);
+
+  return GameInput;
+}(_react.Component);
+
+exports.default = GameInput;
 
 /***/ })
 /******/ ]);
