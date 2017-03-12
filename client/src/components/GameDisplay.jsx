@@ -10,10 +10,11 @@ class GameDisplay extends Component {
     };
   }
   render() {
+    console.log(this.props);
     return (
       <div>
         <Well className="meme-content" bsSize="large">
-          <ul id="messages"></ul>
+          <ul id="messages" />
         </Well>
         <GameInput handleMessage={this.props.handleMessage} />
       </div>

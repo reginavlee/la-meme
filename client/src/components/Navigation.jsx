@@ -13,7 +13,7 @@ class Navigation extends Component {
       <Navbar inverse>
         <Navbar.Header>
           <Navbar.Brand>
-            <Link to="#">la même</Link>
+            la même
           </Navbar.Brand>
         </Navbar.Header>
       </Navbar>

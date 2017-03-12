@@ -1,20 +1,19 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { Button, Grid, Col, Row } from 'react-bootstrap';
 import io from 'socket.io-client';
 import genRandomTokenString from '../../utils/genRandomString';
-import GameDisplay from '../components/GameDisplay';
+import MemeRoom from '../components/MemeRoom';
 
 class Game extends Component {
   constructor(props) {
     super(props);
     const token = genRandomTokenString();
     this.state = {
-      user: {
-        authToken: token,
-        username: `Jahosh${token}`,
-        currentRoom: ''
-      }
+      authToken: token,
+      username: `Jahosh${token}`,
+      currentRoom: '',
+      roomCount: 0
     };
     this.emitMessage = this.emitMessage.bind(this);
   }
@@ -39,33 +38,50 @@ class Game extends Component {
    * create a user on the server using Auth0 token
    */
   createUser() {
-    this.socket.emit('create-user', this.state.user);
+    const payload = {
+      username: this.state.username,
+      authToken: this.state.authToken
+    };
+    this.socket.emit('create-user', payload);
   }
   createRoom() {
     const self = this;
     this.socket.emit('create-room', 'testRoom');
     this.socket.on('join', (roomname) => {
-      console.log('joined room');
       self.setState({
         currentRoom: roomname
       });
     });
   }
   RoomOccupancy() {
-    this.socket.on('occupacy', (RoomOccupancy) => {
-      console.log(RoomOccupancy);
+    this.socket.on('occupancy', (newRoomOccupancy) => {
       this.setState({
-        roomCount: RoomOccupancy
+        roomOccupancy: newRoomOccupancy
+      });
+    });
+    this.socket.on('left-room', (newRoomOccupancy) => {
+      this.setState({
+        roomOccupancy: newRoomOccupancy
       });
     });
   }
   removeUser() {
-    this.socket.emit('forceDisconnect', this.state.user);
+    const room = this.state.currentRoom;
+    const user = this.state.username;
+    const authToken = this.state.authToken;
+    const payload = {
+      room,
+      user,
+      authToken
+    };
+    this.socket.emit('forceDisconnect', payload);
   }
   emitMessage(message) {
-    const user = this.state.user.username;
+    const user = this.state.username;
+    const room = this.state.currentRoom;
     const payload = {
       user,
+      room,
       message
     };
     this.socket.emit('chat-message', payload);
@@ -78,24 +94,11 @@ class Game extends Component {
   }
   render() {
     return (
-      <Grid>
-        <Row className="game-board-header-content">
-          <Col xs={4} xsOffset={5} md={4} mdOffset={5}>
-            <h1>la même</h1>
-            <p>Counter will go here</p>
-            <h2>{ this.state.currentRoom }</h2>
-            <h3> currentUsers in Room: <small> {this.state.roomCount} </small> </h3>
-            <br />
-            <Link to="/">This takes you to home page</Link>
-          </Col>
-        </Row>
-        <Row className="game-board">
-          <Col xs={12} md={12}>
-            <GameDisplay handleMessage={this.emitMessage} />
-          </Col>
-        </Row>
-        {/* <Button bsStyle="primary" onClick={this.createRoom}> Click</Button> */}
-      </Grid>
+      <MemeRoom
+        currentRoom={this.state.currentRoom}
+        roomOccupancy={this.state.roomOccupancy}
+        handleMessage={this.emitMessage}
+      />
     );
   }
 }
