@@ -10,7 +10,6 @@ class GameDisplay extends Component {
     };
   }
   render() {
-    console.log(this.props);
     return (
       <div>
         <Well className="meme-content" bsSize="large">

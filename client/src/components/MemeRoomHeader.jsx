@@ -7,24 +7,28 @@ import { Link } from 'react-router-dom';
  * @param {*} props
  */
 const MemeRoomHeader = (props) => {
+  const spectators = props.spectators;
+  const specDisplay = spectators > 0 ? spectators : 0;
   return (
     <div>
       <Row className="game-board-header-content">
-        <Col xs={6} md={4}>
+        <Col xs={4} md={4}>
           <h3> <Label bsStyle="default" bsSize="large">{props.currentRoom}</Label></h3>
           <br />
           <h3> players: <Label bsStyle="primary">{props.roomOccupancy}</Label> </h3>
         </Col>
-        <Col xs={6} md={4}>
+        <Col xs={4} md={4}>
           <h1 className="text-center">la même</h1>
-          <p className="text-center">Counter will go here</p>
+          <p className="text-center">{props.currentTime}</p>
           <div className="text-center">
             <Link to="/">This takes you to home page</Link>
           </div>
         </Col>
-        <Col xs={6} md={4}>
+        <Col xs={4} md={4}>
           <div className="text-center">
-            <Button bsSize="large" bsStyle="danger" block>Exit</Button>
+            <h3><Label bsStyle="danger" bsSize="large">exit</Label></h3>
+            <br />
+            <h3> spectators: <Label bsStyle="primary">{specDisplay}</Label> </h3>
           </div>
         </Col>
         <br />

@@ -8,7 +8,9 @@ const MemeRoom = (props) => {
     <Grid>
       <MemeRoomHeader
         roomOccupancy={props.roomOccupancy}
+        spectators={props.spectators}
         currentRoom={props.currentRoom}
+        currentTime={props.currentTime}
       />
       <Row className="game-board">
         <Col xs={12} md={12}>
