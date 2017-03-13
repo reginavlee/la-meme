@@ -1,14 +1,10 @@
 //var app = require('../../server.js');
 const db = require('./db.js');
-//const Meme = require('../models/Meme.js');
+const Photo = require('../models/Photo.js');
 const data = require('../../data/memephotos.json');
 const mysql = require('mysql');
 
 const Sequelize = require('sequelize');
-
-const Photo = db.define('Photo', {
-  href: Sequelize.STRING
-});
 
 db.sync();
 
