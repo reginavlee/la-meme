@@ -1,6 +1,5 @@
 const Users = new Map();
 const Rooms = new Map();
-const _ = require('lodash');
 
 let ioRef;
 let self;
@@ -130,13 +129,20 @@ module.exports = {
     if (!roomData.playing) {
       roomData.playing = true;
       let time = 10;
+      let round = 0;
       const countDown = setInterval(() => {
         ioRef.to(room).emit('count-down', { time, countingDown: true });
         time -= 1;
         if (time === -1) {
-          ioRef.to(room).emit('round-over');
+          round += 1;
+          ioRef.to(room).emit('round-over', round);
+          // go to intermission time: 30 seconds ?
+          time = 10;
           console.log('round is over');
-          clearInterval(countDown);
+          console.log(round);
+          if (round >= 3) {
+            clearInterval(countDown);
+          }
         }
       }, 1000);
     }

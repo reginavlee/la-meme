@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import io from 'socket.io-client';
 import genRandomTokenString from '../../utils/genRandomString';
 import MemeRoom from '../components/MemeRoom';
-import _ from 'lodash';
 
 class Game extends Component {
   constructor(props) {
@@ -15,6 +14,7 @@ class Game extends Component {
       playerCount: 0,
       spectatorCount: 0,
       timer: 0,
+      round: 0
     };
     this.emitMessage = this.emitMessage.bind(this);
   }
@@ -42,9 +42,10 @@ class Game extends Component {
     // this.triggerCountDown();
     this.listenforCountdown();
     this.listenForPlayerStatus();
+    this.roundOver();
   }
   componentDidUpdate(prevProps, prevState) {
-    if (!this.state.countingDown && this.state.playerCount === 2) {
+    if (!this.state.countingDown && this.state.playerCount === 2 && this.state.round < 1) {
       this.triggerCountDown();
     }
   }
@@ -113,26 +114,23 @@ class Game extends Component {
   }
   roundOver() {
     const self = this;
-    this.socket.on('round-over', () => {
-      console.log('round is over!');
+    this.socket.on('round-over', (round) => {
+      console.log(`round ${round} is over!`);
+      const count = round + 1;
+      document.getElementById('display-meme').removeAttribute('class');
       self.setState({
-        countingDown: false
+        countingDown: false,
+        round: count
       });
     });
   }
   RoomOccupancy() {
     this.socket.on('occupancy', ({ playerCount, spectatorCount }) => {
-      console.log(playerCount, spectatorCount);
       this.setState({
         playerCount,
         spectatorCount
       });
     });
-    // this.socket.on('left-room', (newRoomOccupancy) => {
-    //   this.setState({
-    //     roomOccupancy: newRoomOccupancy
-    //   });
-    // });
   }
   emitMessage(message) {
     const user = this.state.username;
@@ -158,6 +156,7 @@ class Game extends Component {
         handleMessage={this.emitMessage}
         currentTime={this.state.timer}
         spectators={this.state.spectatorCount}
+        connectionType={this.state.connectionType}
       />
     );
   }

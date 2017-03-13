@@ -14,7 +14,10 @@ const MemeRoom = (props) => {
       />
       <Row className="game-board">
         <Col xs={12} md={12}>
-          <GameDisplay handleMessage={props.handleMessage} />
+          <GameDisplay
+            handleMessage={props.handleMessage}
+            connectionType={props.connectionType}
+          />
         </Col>
       </Row>
       {/* <Button bsStyle="primary" onClick={this.createRoom}> Click</Button> */}
