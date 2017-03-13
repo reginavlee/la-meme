@@ -64,6 +64,7 @@ const config = {
         'NODE_ENV': JSON.stringify('production'),
       }
     }),
+    new webpack.optimize.UglifyJsPlugin({ minimize: true })
   ],
   watch: true,
   stats: { colors: true },
