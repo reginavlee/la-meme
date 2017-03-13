@@ -1,0 +1,17 @@
+
+/* this makes our navbar full screen */
+.container-fluid {  
+  padding: 0px;
+}
+
+.meme-content {
+  height: 400px;
+}
+
+.meme {
+  max-height: 225px;
+}
+
+.meme-display {
+  display: none;
+}

@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
-import { Form, FormGroup, FormControl, InputGroup, DropdownButton, MenuItem } from 'react-bootstrap';
+import { Form, FormGroup, FormControl, InputGroup, DropdownButton, MenuItem, OverlayTrigger, Tooltip } from 'react-bootstrap';
+
+const tooltip = (
+  <Tooltip id="tooltip">Game Commands!</Tooltip>
+);
 
 class GameInput extends Component {
   constructor(props) {
@@ -35,17 +39,19 @@ class GameInput extends Component {
               type="text"
               placeholder="..."
             />
-            <DropdownButton
-              bsStyle="primary"
-              bsSize="large"
-              componentClass={InputGroup.Button}
-              id="meme-input-dropdown"
-              title="Actions"
-            >
-              <MenuItem key="3">Clear</MenuItem>
-              <MenuItem key="1">Save</MenuItem>
-              <MenuItem key="2">Quit</MenuItem>
-            </DropdownButton>
+            <OverlayTrigger placement="right" overlay={tooltip}>
+              <DropdownButton
+                bsStyle="primary"
+                bsSize="large"
+                componentClass={InputGroup.Button}
+                id="meme-input-dropdown"
+                title="Actions"
+              >
+                <MenuItem key="3">Clear</MenuItem>
+                <MenuItem key="1">Save</MenuItem>
+                <MenuItem key="2">Quit</MenuItem>
+              </DropdownButton>
+            </OverlayTrigger>
           </InputGroup>
         </FormGroup>
       </Form>

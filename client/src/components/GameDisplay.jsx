@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Well } from 'react-bootstrap';
+import { Well, Grid, Row, Col, Image } from 'react-bootstrap';
 import GameInput from './GameInput';
 
 class GameDisplay extends Component {
@@ -13,9 +13,24 @@ class GameDisplay extends Component {
     return (
       <div>
         <Well className="meme-content" bsSize="large">
-          <ul id="messages"></ul>
+          <div id="display-meme" className="meme-display">
+            <Col xs={6} md={4}>
+              <Image className="meme" src="https://files.slack.com/files-pri/T2SV1LBC6-F4G3N5S4A/joshmeme.png" />
+            </Col>
+            <Col xs={6} md={4}>
+              <div className="text-center">
+                Meme ShowDown
+              </div>
+            </Col>
+            <Col xs={6} md={4}>
+              <Image className="meme" src="https://files.slack.com/files-pri/T2SV1LBC6-F4G3N5S4A/joshmeme.png" />
+            </Col>
+            {/* <ul id="messages" />*/}
+          </div>
         </Well>
-        <GameInput handleMessage={this.props.handleMessage} />
+        { this.props.connectionType === 'player' ?
+          <GameInput handleMessage={this.props.handleMessage} />
+        : '' }
       </div>
     );
   }
