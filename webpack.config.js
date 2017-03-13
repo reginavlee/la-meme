@@ -54,7 +54,7 @@ const config = {
     ]
   },
   resolve: {
-    extensions: ['', '.js', '.jsx'],
+    extensions: ['*', '.js', '.jsx'],
   },
   plugins: [
     new CopyWebpackPlugin([{ from: PUBLIC_DIR }]),
@@ -71,7 +71,7 @@ const config = {
   devServer: {
     historyApiFallback: true,
     contentBase: './',
-    hot: true
+    hot: false
   }
 };
 
