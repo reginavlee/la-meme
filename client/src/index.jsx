@@ -8,9 +8,9 @@ import {
 } from 'react-router-dom';
 
 import App from './components/App';
-import Home from './Pages/Home';
+import Home from './Pages/HomeContainer';
 import Navigation from './components/Navigation';
-import Dashboard from './Pages/Dashboard';
+import Dashboard from './Pages/DashboardContainer';
 import MemeRoomContainer from './Pages/MemeRoomContainer';
 
 ReactDOM.render(

@@ -118,6 +118,9 @@ class Game extends Component {
       console.log(`round ${round} is over!`);
       const count = round + 1;
       document.getElementById('display-meme').removeAttribute('class');
+      if (round === 3) {
+        document.getElementById('display-meme').className = 'meme-display';
+      }
       self.setState({
         countingDown: false,
         round: count
