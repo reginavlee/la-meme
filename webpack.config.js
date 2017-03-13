@@ -54,11 +54,7 @@ const config = {
     ]
   },
   resolve: {
-<<<<<<< HEAD
     extensions: ['*', '.js', '.jsx'],
-=======
-    extensions: ['*', '.js', '.jsx'],
->>>>>>> socketio countdown working (backend)
   },
   plugins: [
     new CopyWebpackPlugin([{ from: PUBLIC_DIR }]),
