@@ -1,22 +1,21 @@
-//var app = require('../../server.js');
+// var app = require('../../server.js');
 const db = require('./db.js');
 const Photo = require('../models/Photo.js');
 const data = require('../../data/memephotos.json');
-const mysql = require('mysql');
 
-const Sequelize = require('sequelize');
+let i;
 
 db.sync();
 
-const insertPhotos = function() {
-  //could change "data.length" to 12 to only include HR photos
-  for (var i = 0; i < data.length; i++) {
+const insertPhotos = () => {
+  // could change "data.length" to 12 to only include HR photos
+  for (i = 0; i < data.length; i += 1) {
     Photo.create({
       href: data[i].href
-    }).then(function(obj){
+    }).then((obj) => {
       obj.save();
     });
-  console.log(data[0]);
+    console.log(data[0]);
   }
 };
 
