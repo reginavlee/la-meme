@@ -54,7 +54,11 @@ const config = {
     ]
   },
   resolve: {
+<<<<<<< HEAD
     extensions: ['*', '.js', '.jsx'],
+=======
+    extensions: ['*', '.js', '.jsx'],
+>>>>>>> socketio countdown working (backend)
   },
   plugins: [
     new CopyWebpackPlugin([{ from: PUBLIC_DIR }]),
@@ -64,7 +68,6 @@ const config = {
         'NODE_ENV': JSON.stringify('production'),
       }
     }),
-    new webpack.optimize.UglifyJsPlugin({ minimize: true })
   ],
   watch: true,
   stats: { colors: true },

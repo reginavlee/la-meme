@@ -12,7 +12,7 @@ module.exports = {
       socket.on('create-room', this.createRoom);
       socket.on('forceDisconnect', this.removeUser);
       socket.on('chat-message', this.handleMessage);
-      socket.on('start-round', this.handleRoundStart);
+      socket.on('start-round', this.startRound);
     });
   },
   createUser(user) {
@@ -73,6 +73,7 @@ module.exports = {
       roomData.spectators = {};
       roomData.playerCount = 0;
       roomData.spectatorCount = 0;
+      roomData.active = false;
       Rooms.set(room, roomData);
     }
     // if room already exists, user can be added to it
@@ -120,31 +121,93 @@ module.exports = {
     ioRef.to(room).emit('new-message', message);
   },
   handleRoundStart(room) {
+    let times = 0;
     const roomData = Rooms.get(room);
     roomData.playing = false;
     if (roomData.size < 2) {
       // emit something here to client telling them not enough users
       return;
     }
-    if (!roomData.playing) {
+    if (!roomData.playing && times < 1) {
+      times += 1;
       roomData.playing = true;
       let time = 10;
       let round = 0;
+      let intermission = 0;
       const countDown = setInterval(() => {
         ioRef.to(room).emit('count-down', { time, countingDown: true });
         time -= 1;
+        // time elapsed lets do something
         if (time === -1) {
-          round += 1;
-          ioRef.to(room).emit('round-over', round);
-          // go to intermission time: 30 seconds ?
-          time = 10;
-          console.log('round is over');
-          console.log(round);
-          if (round >= 3) {
-            clearInterval(countDown);
+          if (round === 0) {
+            ioRef.to(room).emit('round-over', round);
+            // intermission time
+            if (intermission === 1) {
+              round += 1;
+              // start round 2
+              time = 10;
+              console.log('round 1 intermission done, round 2 start');
+              return;
+            } else {
+              time = 15;
+              intermission += 1;
+              console.log('round 1, 10 seconds over, 15 sec begin');
+              ioRef.to(room).emit('intermission', time);
+            }
           }
+          if (round === 1) {
+            ioRef.to(room).emit('round-over', round);
+
+            if (intermission === 2) {
+              round += 1;
+              // start round 3
+              time = 10;
+              console.log('got here from round 2', round);
+            } else {
+              time = 15;
+              intermission += 1;
+              console.log('round 2, 10 seconds over, 15 sec begin');
+              ioRef.to(room).emit('intermission', time);
+            }
+          }
+          if (round === 2) {
+            ioRef.to(room).emit('round-over', round);
+            time = 15;
+            if (intermission === 3) {
+              round += 1;
+              if (round === 3) {
+                clearInterval(countDown);
+                roomData.active = false;
+              }
+            } else {
+              intermission += 1;
+              ioRef.to(room).emit('intermission', time);
+            }
+          }
+          // go to intermission time: 30 seconds ?
+          // put this in its own function //
+          // let interTime = 20;
+          // const intermission = setInterval(() => {
+          //   ioRef.to(room).emit('intermission', { interTime, onIntermission: true });
+          //   interTime -= 1;
+          //   console.log(interTime, 'intermission running');
+          //   if (interTime === -1) {
+          //     clearInterval(intermission);
+          //   }
+          // }, 1000);
+          // // // ^^^^ put in its own function
+          // time = 10;
+          // console.log('game is over');
         }
       }, 1000);
+    }
+  },
+  startRound(room) {
+    const roomData = Rooms.get(room);
+    if (roomData.playerCount === 2 && roomData.active === false) {
+      roomData.active = true;
+      Rooms.set(room, roomData);
+      self.handleRoundStart(room);
     }
   }
 };

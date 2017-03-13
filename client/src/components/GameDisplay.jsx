@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Well, Grid, Row, Col, Image } from 'react-bootstrap';
+import { Well, Col, Image } from 'react-bootstrap';
 import GameInput from './GameInput';
 
 class GameDisplay extends Component {

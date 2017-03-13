@@ -1,9 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { Grid, Row, Col } from 'react-bootstrap';
+import Home from '../Pages/HomeContainer';
 
-import Navigation from './Navigation';
-import Home from '../Pages/Home';
-import Dashboard from '../Pages/Dashboard';
 
 class App extends Component {
   constructor(props) {
@@ -16,9 +14,7 @@ class App extends Component {
       <Grid fluid>
         <Row>
           <Col xs={12} md={8} mdOffset={1}>
-            {/*<Navigation />*/}
             <Home />
-            {/*<Dashboard />*/}
           </Col>
         </Row>
       </Grid>
