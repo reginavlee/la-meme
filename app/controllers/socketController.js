@@ -14,6 +14,9 @@ module.exports = {
       socket.on('forceDisconnect', this.removeUser);
       socket.on('chat-message', this.handleMessage);
       socket.on('start-round', this.startRound);
+      // redis related
+      socket.on('joined-dashboard', redisController.incrementClientCount);
+      socket.on('left-dashboard', redisController.decrementClientCount);
     });
   },
   createUser(user) {
@@ -116,6 +119,9 @@ module.exports = {
       spectatorCount: roomData.spectatorCount
     };
     ioRef.to(room).emit('occupancy', payload);
+    // update redis
+    const totalCount = roomData.playerCount + roomData.spectatorCount;
+    redisController.updateRoomCount(room, totalCount);
   },
   handleMessage(message) {
     const { room } = message;
