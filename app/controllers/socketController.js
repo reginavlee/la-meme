@@ -15,9 +15,11 @@ module.exports = {
       socket.on('chat-message', this.handleMessage);
       socket.on('start-round', this.startRound);
       // redis related
-      socket.emit('connected-users', 1);
-      socket.on('joined-dashboard', redisController.incrementClientCount);
-      socket.on('left-dashboard', redisController.decrementClientCount);
+      socket.on('joined-dashboard', () => { redisController.incrementClientCount(socket); });
+      socket.on('disconnect', () => { redisController.decrementClientCount(socket); });
+    });
+    io.on('joined-dashboard', () => {
+      console.log('here from outside');
     });
   },
   createUser(user) {
