@@ -188,20 +188,6 @@ module.exports = {
               ioRef.to(room).emit('intermission');
             }
           }
-          // go to intermission time: 30 seconds ?
-          // put this in its own function //
-          // let interTime = 20;
-          // const intermission = setInterval(() => {
-          //   ioRef.to(room).emit('intermission', { interTime, onIntermission: true });
-          //   interTime -= 1;
-          //   console.log(interTime, 'intermission running');
-          //   if (interTime === -1) {
-          //     clearInterval(intermission);
-          //   }
-          // }, 1000);
-          // // // ^^^^ put in its own function
-          // time = 10;
-          // console.log('game is over');
         }
       }, 1000);
     }
