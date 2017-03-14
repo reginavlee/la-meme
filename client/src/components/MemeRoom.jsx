@@ -6,6 +6,7 @@ import GameDisplay from './GameDisplay';
 const MemeRoom = (props) => {
   return (
     <Grid>
+      { props.intermission ? 'intermission' : 'not-intermission' }
       <MemeRoomHeader
         roomOccupancy={props.roomOccupancy}
         spectators={props.spectators}

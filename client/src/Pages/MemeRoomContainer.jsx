@@ -14,7 +14,8 @@ class Game extends Component {
       playerCount: 0,
       spectatorCount: 0,
       timer: 0,
-      round: 0
+      round: 0,
+      intermission: null
     };
     this.emitMessage = this.emitMessage.bind(this);
   }
@@ -42,6 +43,7 @@ class Game extends Component {
     // this.triggerCountDown();
     this.listenforCountdown();
     this.listenForPlayerStatus();
+    this.listenForIntermission();
     this.roundOver();
   }
   componentDidUpdate(prevProps, prevState) {
@@ -117,13 +119,38 @@ class Game extends Component {
     this.socket.on('round-over', (round) => {
       console.log(`round ${round} is over!`);
       const count = round + 1;
-      document.getElementById('display-meme').removeAttribute('class');
-      if (round === 3) {
-        document.getElementById('display-meme').className = 'meme-display';
-      }
+      this.showMeme();
+      // document.getElementById('display-meme').className = 'meme-display';
       self.setState({
         countingDown: false,
         round: count
+      });
+    });
+  }
+  showMeme() {
+    console.log('should show meme');
+    document.getElementById('display-meme').removeAttribute('class');
+  }
+  hideMeme() {
+    console.log('should hide meme');
+    document.getElementById('display-meme').className = 'meme-display';
+  }
+  listenForIntermission() {
+    const self = this;
+    this.socket.on('intermission', () => {
+      self.setState({
+        intermission: true
+      });
+    });
+    this.socket.on('intermission-over', () => {
+      self.hideMeme();
+      self.setState({
+        intermission: false
+      });
+    });
+    this.socket.on('game-over', () => {
+      self.setState({
+        gameOver: true
       });
     });
   }
@@ -160,6 +187,7 @@ class Game extends Component {
         currentTime={this.state.timer}
         spectators={this.state.spectatorCount}
         connectionType={this.state.connectionType}
+        intermission={this.state.intermission}
       />
     );
   }
