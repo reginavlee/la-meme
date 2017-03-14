@@ -1,5 +1,6 @@
-const Promise = require('bluebird');
-const client = Promise.promisifyAll(require('../redis/redisConnect'));
+
+const client = require('../redis/redisConnect').createClient();
+const client2 = require('../redis/redisConnect').createClient();
 
 module.exports = {
   /**
@@ -7,7 +8,19 @@ module.exports = {
    * All of these operations are atomic, meaning they are perfect for quickly changing data
    */
   incrementClientCount() {
-    client.incrAsync('gc').then((v) => { console.log('total online count: ', v); });
+    client.incrAsync('gc')
+    .then((v) => {
+      console.log('total online count: ', v);
+      client.publish('room-count', v);
+    });
+    client2.on('message', (channel, count) => {
+      // globally share count
+      console.log('connected users: ', count);
+
+      // later only emit this to users in dashboard?
+      this.emit('connected-users', count);
+    });
+    client2.subscribe('room-count');
   },
   decrementClientCount() {
     client.decrAsync('gc').then((v) => { console.log('total online count: ', v); });
@@ -30,12 +43,13 @@ module.exports = {
       .catch((err) => {
         if (err) throw new Error(err);
       });
-
     client.hgetallAsync(stringifyRm)
       .then(d => console.log(d))
       .catch(err => console.log(err));
   },
-  publishRoomCount() {
+  publishRooms() {
+  },
+  publishDashboardCount() {
 
   }
 };

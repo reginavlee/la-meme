@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import Dashboard from '../components/Dashboard';
+import style from 'react-table/react-table.css';
 import { Grid, Row, Col, Panel } from 'react-bootstrap';
 import io from 'socket.io-client';
-
 import ReactTable from 'react-table';
-import style from 'react-table/react-table.css';
+
+import Dashboard from '../components/Dashboard';
 
 class DashboardContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      onlineCount: 0
     };
   }
   /**
@@ -24,6 +25,7 @@ class DashboardContainer extends Component {
   }
   componentDidMount() {
     this.emitJoinedDashboard();
+    this.listenForGlobalCount();
   }
   componentWillUnmount() {
     this.emitLeftDashboard();
@@ -34,6 +36,14 @@ class DashboardContainer extends Component {
   }
   emitLeftDashboard() {
     this.socket.emit('left-dashboard');
+  }
+  listenForGlobalCount() {
+    const self = this;
+    this.socket.on('connected-users', (count) => {
+      self.setState({
+        onlineCount: count
+      });
+    });
   }
   render() {
     const data = [{
@@ -57,6 +67,7 @@ class DashboardContainer extends Component {
           <Col md={6}>
             <Panel>
               <h3 className="text-center"> room-list </h3>
+              <p className="text-center"> online users: {this.state.onlineCount } </p>
             </Panel>
             <ReactTable
               data={data}
