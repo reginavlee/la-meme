@@ -74,7 +74,7 @@ module.exports = {
       roomData.playerCount = 0;
       roomData.spectatorCount = 0;
       roomData.active = false;
-      redisController.addRoom(room, roomData); 
+      redisController.addRoom(room, roomData);
       Rooms.set(room, roomData);
     }
     // if room already exists, user can be added to it
