@@ -16,15 +16,20 @@ const SRC_DIR = path.resolve(__dirname, `client/src`);
 const PUBLIC_DIR = path.resolve(__dirname, 'client/public');
 
 const config = {
-  entry: path.resolve(SRC_DIR, 'index.jsx'),
+  entry: [
+    'react-hot-loader/patch',
+    'webpack-dev-server/client?http://localhost:8080',
+    'webpack/hot/only-dev-server',
+    path.resolve(SRC_DIR, 'index.jsx'),
+  ],
   output: {
     filename: 'bundle.js',
-    path: BUILD_DIR
+    path: BUILD_DIR,
   },
   module: {
     rules: [
       {
-        loader: 'react-hot-loader',
+        loader: 'react-hot-loader/webpack',
         test: SRC_DIR
       },
       {
@@ -57,6 +62,9 @@ const config = {
     extensions: ['*', '.js', '.jsx'],
   },
   plugins: [
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NamedModulesPlugin(),
+    new webpack.NoEmitOnErrorsPlugin(),
     new CopyWebpackPlugin([{ from: PUBLIC_DIR }]),
     new DashboardPlugin(),
     new webpack.DefinePlugin({
@@ -64,15 +72,16 @@ const config = {
         'NODE_ENV': JSON.stringify('production'),
       }
     }),
-    new webpack.optimize.UglifyJsPlugin({ minimize: true })
   ],
   watch: true,
   stats: { colors: true },
   devtool: 'inline-source-map',
   devServer: {
+    host: 'localhost',
+    port: 8080,
     historyApiFallback: true,
     contentBase: './',
-    hot: false
+    hot: true
   }
 };
 
