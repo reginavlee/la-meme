@@ -1,14 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-// import { BrowserRouter as Router, Route, hashHistory, IndexRoute } from 'react-router';
 import {
   BrowserRouter as Router,
   Route,
-  Link
 } from 'react-router-dom';
 
 import App from './components/App';
-import Home from './Pages/HomeContainer';
 import Navigation from './components/Navigation';
 import Dashboard from './Pages/DashboardContainer';
 import MemeRoomContainer from './Pages/MemeRoomContainer';
