@@ -142,9 +142,11 @@ module.exports = {
           if (round === 0) {
             ioRef.to(room).emit('round-over', round);
             // intermission time
+            ioRef.to(room).emit('intermission');
             if (intermission === 1) {
               round += 1;
               // start round 2
+              ioRef.to(room).emit('intermission-over');
               time = 10;
               console.log('round 1 intermission done, round 2 start');
               return;
@@ -152,22 +154,22 @@ module.exports = {
               time = 15;
               intermission += 1;
               console.log('round 1, 10 seconds over, 15 sec begin');
-              ioRef.to(room).emit('intermission', time);
             }
           }
           if (round === 1) {
             ioRef.to(room).emit('round-over', round);
-
             if (intermission === 2) {
               round += 1;
               // start round 3
               time = 10;
               console.log('got here from round 2', round);
+              ioRef.to(room).emit('intermission-over');
+              return;
             } else {
               time = 15;
               intermission += 1;
               console.log('round 2, 10 seconds over, 15 sec begin');
-              ioRef.to(room).emit('intermission', time);
+              ioRef.to(room).emit('intermission');
             }
           }
           if (round === 2) {
@@ -175,29 +177,17 @@ module.exports = {
             time = 15;
             if (intermission === 3) {
               round += 1;
+              ioRef.to(room).emit('intermission-over');
+              ioRef.to(room).emit('game-over');
               if (round === 3) {
                 clearInterval(countDown);
                 roomData.active = false;
               }
             } else {
               intermission += 1;
-              ioRef.to(room).emit('intermission', time);
+              ioRef.to(room).emit('intermission');
             }
           }
-          // go to intermission time: 30 seconds ?
-          // put this in its own function //
-          // let interTime = 20;
-          // const intermission = setInterval(() => {
-          //   ioRef.to(room).emit('intermission', { interTime, onIntermission: true });
-          //   interTime -= 1;
-          //   console.log(interTime, 'intermission running');
-          //   if (interTime === -1) {
-          //     clearInterval(intermission);
-          //   }
-          // }, 1000);
-          // // // ^^^^ put in its own function
-          // time = 10;
-          // console.log('game is over');
         }
       }, 1000);
     }
