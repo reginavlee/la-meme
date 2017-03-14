@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import ReactTable from 'react-table';
+import style from 'react-table/react-table.css';
 
 class Dashboard extends Component {
   constructor(props) {

@@ -1,5 +1,6 @@
 const Users = new Map();
 const Rooms = new Map();
+const redisController = require('./redisController');
 
 let ioRef;
 let self;
@@ -60,7 +61,6 @@ module.exports = {
         self.addSpectator(room, this);
       }
 
-      console.log(Rooms);
       // send back new room occupancy to all clients in that particular room
       self.emitRoomOccupancy(room);
     });
@@ -74,6 +74,7 @@ module.exports = {
       roomData.playerCount = 0;
       roomData.spectatorCount = 0;
       roomData.active = false;
+      redisController.addRoom(room, roomData); 
       Rooms.set(room, roomData);
     }
     // if room already exists, user can be added to it
