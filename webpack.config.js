@@ -33,6 +33,10 @@ const config = {
         test: SRC_DIR
       },
       {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader']
+      },
+      {
         loader: 'babel-loader',
         exclude: /node_modules/,
         test: SRC_DIR,
@@ -52,10 +56,6 @@ const config = {
           plugins: ['transform-runtime', 'transform-decorators-legacy', 'transform-class-properties'],
         }
       },
-      {
-        test: /\.css$/,
-        loader: 'style-loader'
-      }
     ]
   },
   resolve: {

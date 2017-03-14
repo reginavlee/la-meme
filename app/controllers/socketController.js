@@ -1,5 +1,6 @@
 const Users = new Map();
 const Rooms = new Map();
+const redisController = require('./redisController');
 
 let ioRef;
 let self;
@@ -13,6 +14,10 @@ module.exports = {
       socket.on('forceDisconnect', this.removeUser);
       socket.on('chat-message', this.handleMessage);
       socket.on('start-round', this.startRound);
+      // redis related
+      socket.emit('connected-users', 1);
+      socket.on('joined-dashboard', redisController.incrementClientCount);
+      socket.on('left-dashboard', redisController.decrementClientCount);
     });
   },
   createUser(user) {
@@ -60,7 +65,6 @@ module.exports = {
         self.addSpectator(room, this);
       }
 
-      console.log(Rooms);
       // send back new room occupancy to all clients in that particular room
       self.emitRoomOccupancy(room);
     });
@@ -74,6 +78,7 @@ module.exports = {
       roomData.playerCount = 0;
       roomData.spectatorCount = 0;
       roomData.active = false;
+      redisController.addRoom(room, roomData);
       Rooms.set(room, roomData);
     }
     // if room already exists, user can be added to it
@@ -115,6 +120,9 @@ module.exports = {
       spectatorCount: roomData.spectatorCount
     };
     ioRef.to(room).emit('occupancy', payload);
+    // update redis
+    const totalCount = roomData.playerCount + roomData.spectatorCount;
+    redisController.updateRoomCount(room, totalCount);
   },
   handleMessage(message) {
     const { room } = message;
