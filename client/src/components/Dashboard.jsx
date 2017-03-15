@@ -1,12 +1,31 @@
 import React from 'react';
-import { Jumbotron, Button } from 'react-bootstrap';
+import { Col, Panel } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
-const Dashboard = () => {
+import PlayerTable from './PlayerTable';
+
+
+const Dashboard = (props) => {
   return (
-    <Jumbotron>
-      <p><Button bsStyle="primary">Start Match</Button></p>
-    </Jumbotron>
+    <div>
+      <Col md={6}>
+        <Panel>
+          <h3 className="text-center"> user-list </h3>
+          <p className="text-center"> online users: {props.onlineCount} </p>
+        </Panel>
+        <PlayerTable
+          data={props.playerTableData}
+        />
+      </Col>
+      <Col md={6} >
+        <Panel>
+          <h3 className="text-center"> your stats </h3>
+        </Panel>
+        <Link to="play">This takes you to chat-room page</Link>
+      </Col>
+    </div>
   );
 };
 
 export default Dashboard;
+

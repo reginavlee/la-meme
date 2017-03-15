@@ -1,17 +1,21 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import style from 'react-table/react-table.css';
-import { Grid, Row, Col, Panel } from 'react-bootstrap';
+import { Grid, Row, Col } from 'react-bootstrap';
 import io from 'socket.io-client';
-import ReactTable from 'react-table';
+import genRandomTokenString from '../../utils/genRandomString';
 
+import AlertsContainer from '../components/alerts/AlertsContainer';
 import Dashboard from '../components/Dashboard';
 
 class DashboardContainer extends Component {
   constructor(props) {
     super(props);
+    const token = genRandomTokenString();
     this.state = {
-      onlineCount: 0
+      authToken: token,
+      username: `Jahosh${token}`,
+      users: new Map(),
+      onlineCount: 0,
+      newUser: false
     };
   }
   /**
@@ -19,6 +23,7 @@ class DashboardContainer extends Component {
    */
   componentWillMount() {
     this.socket = io('http://localhost:3000');
+    this.createUser();
     window.onbeforeunload = () => {
       this.emitLeftDashboard();
     };
@@ -26,10 +31,42 @@ class DashboardContainer extends Component {
   componentDidMount() {
     this.emitJoinedDashboard();
     this.listenForGlobalCount();
+    this.listenForRoomData();
+    this.newUserJoined();
+    this.socket.on('test', (test) => {
+      console.log(test);
+    });
+    this.handleRoomData();
   }
   componentWillUnmount() {
     this.emitLeftDashboard();
     window.onbeforeunload = null;
+  }
+  /**
+   * {Global-Event} A new user has joined the socket.io server, notify user 
+   */
+  newUserJoined() {
+    this.socket.on('new-user', (d) => {
+      console.log(d, 'recieved new user event');
+      this.setState({
+        newUser: true
+      });
+      setTimeout(() => {
+        this.setState({
+          newUser: false
+        });
+      }, 2000);
+    });
+  }
+  /**
+    * create a user on the server using Auth0 token
+    */
+  createUser() {
+    const payload = {
+      username: this.state.username,
+      authToken: this.state.authToken
+    };
+    this.socket.emit('create-user', payload);
   }
   emitJoinedDashboard() {
     this.socket.emit('joined-dashboard');
@@ -39,49 +76,52 @@ class DashboardContainer extends Component {
   }
   listenForGlobalCount() {
     const self = this;
-    this.socket.on('connected-users', (count) => {
+    this.socket.on('connected-user', (count, userInfo) => {
+      // grab newly connected users info
+      const { sid, un, ol } = userInfo;
+      const connectedUsers = this.state.users;
+      connectedUsers.set(sid, { un, ol });
       self.setState({
-        onlineCount: count
+        onlineCount: count,
+        users: connectedUsers
       });
     });
   }
+  listenForRoomData() {
+    this.socket.on('rooms-data', (data) => {
+      this.setState({
+        data
+      });
+    });
+  }
+  handleRoomData() {
+  }
   render() {
+    let roomData = {rm: '', rs: 0 };
+    if (this.state.data) {
+      roomData = JSON.parse(this.state.data);
+      console.log(roomData);
+    }
     const data = [{
-      roomname: 'testRoom',
-      roomCount: 1
+      rm: 'testRoom',
+      rs: 1
     }];
-    const columns = [
-      {
-        header: 'Room name',
-        accessor: 'roomname'
-      },
-      {
-        header: 'Room occupancy',
-        accessor: 'roomCount'
-      }
-    ];
-
     return (
       <Grid>
         <Row>
-          <Col md={6}>
-            <Panel>
-              <h3 className="text-center"> room-list </h3>
-              <p className="text-center"> online users: {this.state.onlineCount } </p>
-            </Panel>
-            <ReactTable
-              data={data}
-              style={style}
-              columns={columns}
-              defaultPageSize={10}
+          <Col md={12}>
+            <Dashboard
+              onlineCount={this.state.onlineCount}
+              playerTableData={this.state.users}
             />
           </Col>
-          <Col md={6} >
-            <Panel>
-              <h3 className="text-center"> your stats </h3>
-            </Panel>
-            <Link to="play">This takes you to chat-room page</Link>
-            <Dashboard />
+        </Row>
+        <hr />
+        <Row>
+          <Col md={12}>
+            <AlertsContainer
+              newUser={this.state.newUser}
+            />
           </Col>
         </Row>
       </Grid>

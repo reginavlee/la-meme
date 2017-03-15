@@ -15,16 +15,16 @@ module.exports = {
       socket.on('chat-message', this.handleMessage);
       socket.on('start-round', this.startRound);
       // redis related
-      socket.on('joined-dashboard', () => { redisController.incrementClientCount(socket); });
-      socket.on('disconnect', () => { redisController.decrementClientCount(socket); });
+      socket.on('joined-dashboard', () => { redisController.incrementClientCount(socket, ioRef); });
+      socket.on('disconnect', () => { redisController.decrementClientCount(socket, ioRef); });
     });
     io.on('joined-dashboard', () => {
       console.log('here from outside');
     });
   },
   createUser(user) {
-    const { username, authToken } = user;
-    Users.set(authToken, username);
+    redisController.addUser(user, this.id);
+    ioRef.emit('new-user', 1);
   },
   removeUser(user) {
     const { room, connectionType } = user;
@@ -54,7 +54,7 @@ module.exports = {
         throw new Error(err);
       }
       // add the room to our map of stored rooms (eventually will be a database);
-      self.addRoomToMap(room);
+      self.addRoomToMap(room, this);
       // emit successfully join
       self.emitSuccessfulJoin(room);
       // grab room so we can determine whether user is a player or spectator
@@ -68,10 +68,10 @@ module.exports = {
       }
 
       // send back new room occupancy to all clients in that particular room
-      self.emitRoomOccupancy(room);
+      self.emitRoomOccupancy(room, this);
     });
   },
-  addRoomToMap(room) {
+  addRoomToMap(room, socket) {
     // if room doesn't already exist, lets create one
     if (!Rooms.get(room)) {
       const roomData = {};
@@ -80,7 +80,7 @@ module.exports = {
       roomData.playerCount = 0;
       roomData.spectatorCount = 0;
       roomData.active = false;
-      redisController.addRoom(room, roomData);
+      redisController.addRoom(room, roomData, socket);
       Rooms.set(room, roomData);
     }
     // if room already exists, user can be added to it
@@ -115,7 +115,7 @@ module.exports = {
     roomData.spectatorCount -= 1;
     Rooms.set(room, roomData);
   },
-  emitRoomOccupancy(room) {
+  emitRoomOccupancy(room, socket) {
     const roomData = Rooms.get(room);
     const payload = {
       playerCount: roomData.playerCount,
@@ -124,7 +124,11 @@ module.exports = {
     ioRef.to(room).emit('occupancy', payload);
     // update redis
     const totalCount = roomData.playerCount + roomData.spectatorCount;
-    redisController.updateRoomCount(room, totalCount);
+    if (totalCount > 0) {
+      console.log('redis updateROom called');
+      // use ioRef in the future to only emit to players in dashboard/lobby area
+      redisController.updateRoomCount(room, totalCount, socket);
+    }
   },
   handleMessage(message) {
     const { room } = message;
