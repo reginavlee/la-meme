@@ -22,6 +22,7 @@ class DashboardContainer extends Component {
    * Init connect to socket.io
    */
   componentWillMount() {
+    // there will be duplicates inside of the user-list untill we get unique usernames going ~
     this.socket = io('http://localhost:3000');
     this.createUser();
     window.onbeforeunload = () => {

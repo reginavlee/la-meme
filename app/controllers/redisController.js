@@ -67,7 +67,7 @@ module.exports = {
   decrementClientCount(socket, ioRef) {
     console.log('user disconnected');
 
-    // set key 'ol' to equal 0 ~ meaning offline   
+    // set key 'ol' to equal 0 ~ meaning offline  
     // pubClient.delAsync(socket.id)
     //   .then(v => console.log('deleted', v));
     pubClient.hset(socket.id, 'ol', '0');

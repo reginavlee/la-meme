@@ -25,7 +25,7 @@ class Game extends Component {
     this.renderMessage();
     this.RoomOccupancy();
     window.onbeforeunload = () => {
-      this.removeUser();
+      // this.removeUser();
     };
   }
   /**
@@ -46,7 +46,7 @@ class Game extends Component {
    * removes a user from the users storage on unmounting
    */
   componentWillUnmount() {
-    this.removeUser();
+    // this.removeUser();
     window.onbeforeunload = null;
   }
   /**

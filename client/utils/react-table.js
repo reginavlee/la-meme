@@ -5,6 +5,7 @@ const columns = [
   },
   {
     header: 'Socketid',
+    sortable: false,
     accessor: 'sid'
   }
 ];
