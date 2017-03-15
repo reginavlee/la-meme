@@ -21,12 +21,11 @@ class Game extends Component {
   }
   componentWillMount() {
     this.socket = io('http://localhost:3000');
-    this.createUser();
     this.createRoom();
     this.renderMessage();
     this.RoomOccupancy();
     window.onbeforeunload = () => {
-      this.removeUser();
+      // this.removeUser();
     };
   }
   /**
@@ -47,18 +46,8 @@ class Game extends Component {
    * removes a user from the users storage on unmounting
    */
   componentWillUnmount() {
-    this.removeUser();
+    // this.removeUser();
     window.onbeforeunload = null;
-  }
-  /**
-   * create a user on the server using Auth0 token
-   */
-  createUser() {
-    const payload = {
-      username: this.state.username,
-      authToken: this.state.authToken
-    };
-    this.socket.emit('create-user', payload);
   }
   /**
    * removes a user on the server
