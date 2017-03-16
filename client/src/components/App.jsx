@@ -12,6 +12,17 @@ import Dashboard from '../Pages/DashboardContainer';
 import MemeRoomContainer from '../Pages/MemeRoomContainer';
 import Login from '../Pages/Login'
 
+import AuthService from '../../utils/AuthService'
+
+const auth = new AuthService('KhDTuf4lq48s3Db6kEvHHaLGaQCb7ETk', 'lameme.auth0.com');
+
+// validate authentication for private routes
+// const requireAuth = (nextState, replace) => {
+//   if (!auth.loggedIn()) {
+//     replace({ pathname: '/login' })
+//   }
+// }
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -28,7 +39,7 @@ class App extends Component {
               <div>
                 <Switch>
                   <Route exact path="/" component={Home} />
-                  <Route path="/dashboard" component={Dashboard} />
+                  <Route path="/dashboard" component={Dashboard} onEnter={requireAuth} />
                   <Route path="/play" component={MemeRoomContainer} />
                   <Route path="/login" component={Login} />
                   <Route render={() => <h1> Page not found </h1>} />
