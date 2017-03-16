@@ -1,26 +1,36 @@
-import Auth0Lock from 'auth0-lock'
-import { browserHistory } from 'react-router'
+import Auth0Lock from 'auth0-lock';
+// import { browserHistory } from 'react-router-dom';
 
 export default class AuthService {
   constructor(clientId, domain) {
     // Configure Auth0
     this.lock = new Auth0Lock(clientId, domain, {
       auth: {
+<<<<<<< HEAD
         redirectUrl: 'http://localhost:8080/dashboard',
         responseType: 'token'
+=======
+        // lets change this to 8080 so that it hits the dev server instead of our server on redirect.
+        redirectUrl: 'http://localhost:8080/dashboard',
+        responseType: 'token',
+>>>>>>> setup auth
       } 
     })
     // Add callback for lock `authenticated` event
-    this.lock.on('authenticated', this._doAuthentication.bind(this))
+    this.lock.on('authenticated', this._doAuthentication.bind(this));
     // binds login functions to keep this context
-    this.login = this.login.bind(this)
+    this.login = this.login.bind(this);
   }
 
   _doAuthentication(authResult) {
     // Saves the user token
-    this.setToken(authResult.idToken)
+    this.setToken(authResult.idToken);
     // navigate to the home route
+<<<<<<< HEAD
     //redirect to dashboard
+=======
+    // browserHistory.replace('/home');
+>>>>>>> setup auth
   }
 
   login() {

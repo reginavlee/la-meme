@@ -17,9 +17,14 @@ app.use(morgan('dev'));
 app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.resolve(__dirname, './client')));
+app.use(express.static(path.resolve(__dirname, 'client')));
 
 app.use('/', router);
+
+app.get('/login*', (req, res) => {
+  console.log(req);
+  res.sendFile(path.resolve(__dirname, 'client', 'public', 'index.html'));
+});
 
 
 /*
