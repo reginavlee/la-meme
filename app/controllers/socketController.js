@@ -1,5 +1,6 @@
 const Users = new Map();
 const Rooms = new Map();
+const redisController = require('./redisController');
 
 let ioRef;
 let self;
@@ -13,11 +14,17 @@ module.exports = {
       socket.on('forceDisconnect', this.removeUser);
       socket.on('chat-message', this.handleMessage);
       socket.on('start-round', this.startRound);
+      // redis related
+      socket.on('joined-dashboard', () => { redisController.incrementClientCount(socket, ioRef); });
+      socket.on('disconnect', () => { redisController.decrementClientCount(socket, ioRef); });
+    });
+    io.on('joined-dashboard', () => {
+      console.log('here from outside');
     });
   },
   createUser(user) {
-    const { username, authToken } = user;
-    Users.set(authToken, username);
+    redisController.addUser(user, this.id);
+    ioRef.emit('new-user', 1);
   },
   removeUser(user) {
     const { room, connectionType } = user;
@@ -47,7 +54,7 @@ module.exports = {
         throw new Error(err);
       }
       // add the room to our map of stored rooms (eventually will be a database);
-      self.addRoomToMap(room);
+      self.addRoomToMap(room, this);
       // emit successfully join
       self.emitSuccessfulJoin(room);
       // grab room so we can determine whether user is a player or spectator
@@ -60,12 +67,11 @@ module.exports = {
         self.addSpectator(room, this);
       }
 
-      console.log(Rooms);
       // send back new room occupancy to all clients in that particular room
-      self.emitRoomOccupancy(room);
+      self.emitRoomOccupancy(room, this);
     });
   },
-  addRoomToMap(room) {
+  addRoomToMap(room, socket) {
     // if room doesn't already exist, lets create one
     if (!Rooms.get(room)) {
       const roomData = {};
@@ -74,6 +80,7 @@ module.exports = {
       roomData.playerCount = 0;
       roomData.spectatorCount = 0;
       roomData.active = false;
+      redisController.addRoom(room, roomData, socket);
       Rooms.set(room, roomData);
     }
     // if room already exists, user can be added to it
@@ -108,13 +115,20 @@ module.exports = {
     roomData.spectatorCount -= 1;
     Rooms.set(room, roomData);
   },
-  emitRoomOccupancy(room) {
+  emitRoomOccupancy(room, socket) {
     const roomData = Rooms.get(room);
     const payload = {
       playerCount: roomData.playerCount,
       spectatorCount: roomData.spectatorCount
     };
     ioRef.to(room).emit('occupancy', payload);
+    // update redis
+    const totalCount = roomData.playerCount + roomData.spectatorCount;
+    if (totalCount > 0) {
+      console.log('redis updateROom called');
+      // use ioRef in the future to only emit to players in dashboard/lobby area
+      redisController.updateRoomCount(room, totalCount, socket);
+    }
   },
   handleMessage(message) {
     const { room } = message;
@@ -142,9 +156,11 @@ module.exports = {
           if (round === 0) {
             ioRef.to(room).emit('round-over', round);
             // intermission time
+            ioRef.to(room).emit('intermission');
             if (intermission === 1) {
               round += 1;
               // start round 2
+              ioRef.to(room).emit('intermission-over');
               time = 10;
               console.log('round 1 intermission done, round 2 start');
               return;
@@ -152,22 +168,22 @@ module.exports = {
               time = 15;
               intermission += 1;
               console.log('round 1, 10 seconds over, 15 sec begin');
-              ioRef.to(room).emit('intermission', time);
             }
           }
           if (round === 1) {
             ioRef.to(room).emit('round-over', round);
-
             if (intermission === 2) {
               round += 1;
               // start round 3
               time = 10;
               console.log('got here from round 2', round);
+              ioRef.to(room).emit('intermission-over');
+              return;
             } else {
               time = 15;
               intermission += 1;
               console.log('round 2, 10 seconds over, 15 sec begin');
-              ioRef.to(room).emit('intermission', time);
+              ioRef.to(room).emit('intermission');
             }
           }
           if (round === 2) {
@@ -175,29 +191,17 @@ module.exports = {
             time = 15;
             if (intermission === 3) {
               round += 1;
+              ioRef.to(room).emit('intermission-over');
+              ioRef.to(room).emit('game-over');
               if (round === 3) {
                 clearInterval(countDown);
                 roomData.active = false;
               }
             } else {
               intermission += 1;
-              ioRef.to(room).emit('intermission', time);
+              ioRef.to(room).emit('intermission');
             }
           }
-          // go to intermission time: 30 seconds ?
-          // put this in its own function //
-          // let interTime = 20;
-          // const intermission = setInterval(() => {
-          //   ioRef.to(room).emit('intermission', { interTime, onIntermission: true });
-          //   interTime -= 1;
-          //   console.log(interTime, 'intermission running');
-          //   if (interTime === -1) {
-          //     clearInterval(intermission);
-          //   }
-          // }, 1000);
-          // // // ^^^^ put in its own function
-          // time = 10;
-          // console.log('game is over');
         }
       }, 1000);
     }

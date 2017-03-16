@@ -1,25 +1,26 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-// import { BrowserRouter as Router, Route, hashHistory, IndexRoute } from 'react-router';
-import {
-  BrowserRouter as Router,
-  Route,
-  Link
-} from 'react-router-dom';
-
 import App from './components/App';
-import Home from './Pages/HomeContainer';
-import Navigation from './components/Navigation';
-import Dashboard from './Pages/DashboardContainer';
-import MemeRoomContainer from './Pages/MemeRoomContainer';
+
+import Login from './pages/Login';
+import AuthService from '../utils/AuthService';
+import IndexRediret from 'react-router';
+
+const auth = new AuthService('KhDTuf4lq48s3Db6kEvHHaLGaQCb7ETk', 'lameme.auth0.com');
+
+// validate authentication for private routes
+const requireAuth = (nextState, replace) => {
+  if (!auth.loggedIn()) {
+    replace({ pathname: '/login' })
+  }
+}
+
+const Authenticate = () => {
+  if (!auth.loggedIn()) {
+    auth.login();
+  }
+}
 
 ReactDOM.render(
-  <Router>
-    <div>
-      <Navigation />
-      <Route exact path="/" component={App} />
-      <Route path="/dashboard" component={Dashboard} />
-      <Route path="/play" component={MemeRoomContainer} />
-    </div>
-  </Router>
+  <App />
   , document.getElementById('app'));

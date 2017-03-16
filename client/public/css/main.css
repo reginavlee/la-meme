@@ -15,3 +15,7 @@
 .meme-display {
   display: none;
 }
+
+.notification-panel {
+  margin-top: 25px;
+}

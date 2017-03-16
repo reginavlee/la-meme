@@ -20,6 +20,7 @@ module.exports = {
         "react/prop-types": 0,
         "comma-dangle": 0,
         "arrow-body-style": 0,
-        "max-len": 0
+        "max-len": 0,
+        "no-restricted-syntax": 0,
     }
 };

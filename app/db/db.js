@@ -3,7 +3,8 @@ const Sequelize = require('sequelize');
 // const Meme = require('../models/Meme');
 // const Room = require('../models/Room');
 
-const db = new Sequelize('postgres://avehvksm:BsxxRvnB0sMhTN48xMclrogYVhcmLlxY@stampy.db.elephantsql.com:5432/avehvksm');
+// insert your url below based on how your connecting to postgres //
+const db = new Sequelize('');
 
 
 const Meme = db.define('Memes', {

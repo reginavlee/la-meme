@@ -5,9 +5,10 @@ const path = require('path');
 const helmet = require('helmet');
 const bodyParser = require('body-parser');
 
-
 const router = require('./routes');
-const socketHandler = require('./app/controllers/socketController');
+
+const socketController = require('./app/controllers/socketController');
+const redisController = require('./app/controllers/redisController');
 
 const app = express();
 const port = 3000;
@@ -33,6 +34,6 @@ const server = http.createServer(app).listen(port, () => {
  */
 const io = require('socket.io')(server);
 
-socketHandler.init(io);
+socketController.init(io);
 
 module.exports = app;

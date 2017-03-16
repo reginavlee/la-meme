@@ -1,7 +1,16 @@
 import React, { Component, PropTypes } from 'react';
 import { Grid, Row, Col } from 'react-bootstrap';
-import Home from '../Pages/HomeContainer';
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch
+} from 'react-router-dom';
 
+import Navigation from './Navigation';
+import Home from '../Pages/HomeContainer';
+import Dashboard from '../Pages/DashboardContainer';
+import MemeRoomContainer from '../Pages/MemeRoomContainer';
+import Login from '../Pages/Login'
 
 class App extends Component {
   constructor(props) {
@@ -12,9 +21,20 @@ class App extends Component {
   render() {
     return (
       <Grid fluid>
+        <Navigation />
         <Row>
           <Col xs={12} md={8} mdOffset={1}>
-            <Home />
+            <Router>
+              <div>
+                <Switch>
+                  <Route exact path="/" component={Home} />
+                  <Route path="/dashboard" component={Dashboard} />
+                  <Route path="/play" component={MemeRoomContainer} />
+                  <Route path="/login" component={Login} />
+                  <Route render={() => <h1> Page not found </h1>} />
+                </Switch>
+              </div>
+            </Router>
           </Col>
         </Row>
       </Grid>
