@@ -26,11 +26,6 @@ export default class AuthService {
     // Saves the user token
     this.setToken(authResult.idToken);
     // navigate to the home route
-<<<<<<< HEAD
-    //redirect to dashboard
-=======
-    // browserHistory.replace('/home');
->>>>>>> setup auth
   }
 
   login() {

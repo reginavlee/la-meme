@@ -44,8 +44,6 @@ function PublicRoute({ component: Component, authed, ...rest }) {
   );
 }
 
->>>>>>> setup auth
-
 class App extends Component {
   constructor(props) {
     super(props);
