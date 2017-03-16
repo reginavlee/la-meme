@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import {
   BrowserRouter as Router,
   Route,
+  Switch
 } from 'react-router-dom';
 
 import App from './components/App';
@@ -14,9 +15,12 @@ ReactDOM.render(
   <Router>
     <div>
       <Navigation />
-      <Route exact path="/" component={App} />
-      <Route path="/dashboard" component={Dashboard} />
-      <Route path="/play" component={MemeRoomContainer} />
+      <Switch>
+        <Route exact path="/" component={App} />
+        <Route path="/dashboard" component={Dashboard} />
+        <Route path="/play" component={MemeRoomContainer} />
+        <Route render={() => <h1> Page not found </h1>} />
+      </Switch>
     </div>
   </Router>
   , document.getElementById('app'));
