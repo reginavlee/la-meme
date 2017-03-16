@@ -12,6 +12,11 @@ class GameDisplay extends Component {
   render() {
     return (
       <div>
+
+        <Col xs={6} md={4}>
+          <Image className="meme" src= {this.props.memePhoto} />
+        </Col>
+
         <Well className="meme-content" bsSize="large">
           <div id="display-meme" className="meme-display">
             <Col xs={6} md={4}>
