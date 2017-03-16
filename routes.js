@@ -1,5 +1,8 @@
 const router = require('express').Router();
+const cors = require('cors');
 const controller = require('./app/controllers/index');
+const app = require('./server').app;
+
 // const socketController = require('./app/controllers/socketController');
 
 /*
@@ -14,8 +17,9 @@ router.get('/users/:id', controller.users.getById);
 /*
  * {Meme} API Routes
  */
-router.get('/api/memes', controller.memes.get);
+router.get('/api/memes', cors(), controller.memes.get);
 router.post('/api/memes', controller.memes.post);
+
 
 /*
  * {Rooms} API Routes
