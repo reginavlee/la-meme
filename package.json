@@ -21,8 +21,10 @@
   "dependencies": {
     "auth0": "^2.6.0",
     "auth0-lock": "^10.13.0",
+    "axios": "^0.15.3",
     "bluebird": "^3.5.0",
     "body-parser": "^1.17.1",
+    "cors": "^2.8.1",
     "eslint": "^3.17.1",
     "express": "^4.15.2",
     "helmet": "^3.5.0",
