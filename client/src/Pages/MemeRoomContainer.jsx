@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import io from 'socket.io-client';
 import genRandomTokenString from '../../utils/genRandomString';
 import MemeRoom from '../components/MemeRoom';
+import axios from 'axios';
+
 
 class Game extends Component {
   constructor(props) {
@@ -15,15 +17,32 @@ class Game extends Component {
       spectatorCount: 0,
       timer: 0,
       round: 0,
-      intermission: null
+      intermission: null,
+      memePhoto: []
     };
     this.emitMessage = this.emitMessage.bind(this);
+    this.getMemePhoto = this.getMemePhoto.bind(this);
   }
+
+  getMemePhoto() {
+    axios.get("http://localhost:3000/api/memes")
+      .then((results) => {
+        this.setState({
+          memePhoto: results.data
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
+
   componentWillMount() {
     this.socket = io('http://localhost:3000');
     this.createRoom();
     this.renderMessage();
     this.RoomOccupancy();
+    this.getMemePhoto();
     window.onbeforeunload = () => {
       // this.removeUser();
     };
@@ -201,6 +220,7 @@ class Game extends Component {
         spectators={this.state.spectatorCount}
         connectionType={this.state.connectionType}
         intermission={this.state.intermission}
+        memePhoto={this.state.memePhoto}
       />
     );
   }
