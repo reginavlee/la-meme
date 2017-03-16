@@ -18,6 +18,7 @@ const MemeRoom = (props) => {
           <GameDisplay
             handleMessage={props.handleMessage}
             connectionType={props.connectionType}
+            memePhoto={props.memePhoto}
           />
         </Col>
       </Row>
