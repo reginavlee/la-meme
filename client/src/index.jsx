@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './components/App';
 
-import Login from './pages/Login';
 import AuthService from '../utils/AuthService';
 import IndexRediret from 'react-router';
 

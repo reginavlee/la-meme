@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Grid, Row, Col } from 'react-bootstrap';
+import { Grid, Row, Col, Button } from 'react-bootstrap';
 import io from 'socket.io-client';
 import genRandomTokenString from '../../utils/genRandomString';
 
@@ -30,6 +30,8 @@ class DashboardContainer extends Component {
     };
   }
   componentDidMount() {
+    console.log(this.props);
+    console.log(this.props.auth.loggedIn());
     this.emitJoinedDashboard();
     this.listenForGlobalCount();
     this.listenForRoomData();
@@ -110,6 +112,11 @@ class DashboardContainer extends Component {
     return (
       <Grid>
         <Row>
+          <Button bsStyle="primary" onClick={ () => {
+            this.props.auth.logout();
+            this.props.logout();
+            console.log('fired');
+            }}>Logout</Button> 
           <Col md={12}>
             <Dashboard
               onlineCount={this.state.onlineCount}
