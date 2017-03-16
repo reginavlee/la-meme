@@ -10,6 +10,7 @@ import Navigation from './Navigation';
 import Home from '../Pages/HomeContainer';
 import Dashboard from '../Pages/DashboardContainer';
 import MemeRoomContainer from '../Pages/MemeRoomContainer';
+import Login from '../Pages/Login'
 
 class App extends Component {
   constructor(props) {
@@ -29,6 +30,7 @@ class App extends Component {
                   <Route exact path="/" component={Home} />
                   <Route path="/dashboard" component={Dashboard} />
                   <Route path="/play" component={MemeRoomContainer} />
+                  <Route path="/login" component={Login} />
                   <Route render={() => <h1> Page not found </h1>} />
                 </Switch>
               </div>

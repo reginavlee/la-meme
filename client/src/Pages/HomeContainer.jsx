@@ -1,5 +1,6 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router-dom';
+import AuthService from '../../utils/AuthService';
 
 class Home extends Component {
   constructor(props) {
@@ -14,8 +15,9 @@ class Home extends Component {
     return (
       <div>
         <h1>la même</h1>
+        <Link to="/login">Login</Link>
         <Link to="/dashboard">Dashboard</Link>
-      </div>
+      </div> 
     );
   }
 }

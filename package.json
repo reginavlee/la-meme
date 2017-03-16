@@ -20,6 +20,7 @@
   "homepage": "https://github.com/la-meme/la-meme#readme",
   "dependencies": {
     "auth0": "^2.6.0",
+    "auth0-lock": "^10.13.0",
     "bluebird": "^3.5.0",
     "body-parser": "^1.17.1",
     "express": "^4.15.2",
