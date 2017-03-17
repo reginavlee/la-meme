@@ -16,6 +16,26 @@
   display: none;
 }
 
+.captionInput {
+  display: none;
+}
+
 .notification-panel {
   margin-top: 25px;
+}
+
+.photo {
+  height: 390px;
+  float: left;
+  margin-top: 5px;
+}
+
+.photo-display {
+  display: none;
+}
+
+.inputArea {
+  position: absolute;
+  margin-top: 50px;
+  padding-left: 400px;
 }
