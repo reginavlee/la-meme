@@ -12,7 +12,6 @@ class DashboardContainer extends Component {
     const token = genRandomTokenString();
     this.state = {
       authToken: token,
-      username: `Jahosh${token}`,
       users: new Map(),
       onlineCount: 0,
       newUser: false
@@ -24,21 +23,47 @@ class DashboardContainer extends Component {
   componentWillMount() {
     // there will be duplicates inside of the user-list untill we get unique usernames going ~
     this.socket = io('http://localhost:3000');
-    this.createUser();
     window.onbeforeunload = () => {
       this.emitLeftDashboard();
     };
   }
   componentDidMount() {
-    console.log(this.props);
-    console.log(this.props.auth.loggedIn());
-    this.emitJoinedDashboard();
-    this.listenForGlobalCount();
-    this.listenForRoomData();
-    this.newUserJoined();
+    this.props.auth.lock.getUserInfo(localStorage.getItem('accessToken'), (err, profile) => {
+      if (err) {
+        console.log(err);
+      }
+      this.setState({
+        profile
+      });
+    });
+    // console.log(this.props);
+    // if (this.props.profile) {
+    //   this.createUser(this.props.profile.username);
+    //   this.emitJoinedDashboard();
+    //   this.listenForGlobalCount();
+    //   this.listenForRoomData();
+    //   this.newUserJoined();
+    //   this.handleRoomData();
+    // }
+    // if (this.state.username) {
+    // }
+    // this.createUser(this.props.profile.username);
+    // this.emitJoinedDashboard();
+    // this.listenForGlobalCount();
+    // this.listenForRoomData();
+    // this.newUserJoined();
+    // this.handleRoomData();
     this.socket.on('test', (test) => {
       console.log(test);
     });
+  }
+  componentWillReceiveProps(nextProps) {
+    console.log(this.props);
+    this.createUser(nextProps.profile.username);
+    this.emitJoinedDashboard(nextProps.profile.username);
+    this.listenForGlobalCount();
+    this.listenForRoomData();
+    this.newUserJoined();
     this.handleRoomData();
   }
   componentWillUnmount() {
@@ -64,17 +89,18 @@ class DashboardContainer extends Component {
   /**
     * create a user on the server using Auth0 token
     */
-  createUser() {
+  createUser(username) {
+    console.log(username);
     const payload = {
-      username: this.state.username,
+      username,
       authToken: this.state.authToken
     };
     this.socket.emit('create-user', payload);
   }
-  emitJoinedDashboard() {
-    this.socket.emit('joined-dashboard');
+  emitJoinedDashboard(username) {
+    this.socket.emit('joined-dashboard', username);
   }
-  emitLeftDashboard() {
+  emitLeftDashboard(username) {
     this.socket.emit('left-dashboard');
   }
   listenForGlobalCount() {
@@ -100,15 +126,6 @@ class DashboardContainer extends Component {
   handleRoomData() {
   }
   render() {
-    let roomData = {rm: '', rs: 0 };
-    if (this.state.data) {
-      roomData = JSON.parse(this.state.data);
-      console.log(roomData);
-    }
-    const data = [{
-      rm: 'testRoom',
-      rs: 1
-    }];
     return (
       <Grid>
         <Row>
@@ -121,6 +138,7 @@ class DashboardContainer extends Component {
             <Dashboard
               onlineCount={this.state.onlineCount}
               playerTableData={this.state.users}
+              profile={this.props.profile}
             />
           </Col>
         </Row>

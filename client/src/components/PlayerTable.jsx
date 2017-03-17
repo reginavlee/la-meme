@@ -26,9 +26,6 @@ class PlayerTable extends Component {
         style={style}
         columns={columns}
         defaultPageSize={10}
-        onChange={(state, instance) => {
-          console.log(state, instance);
-        }}
       />
     );
   }

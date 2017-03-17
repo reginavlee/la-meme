@@ -1,28 +1,25 @@
-import React, { PropTypes as T } from 'react'
-import {ButtonToolbar, Button} from 'react-bootstrap'
-import AuthService from '../../utils/AuthService'
-//import styles from './styles.module.css'
+import React, { PropTypes as T } from 'react';
+import { Button } from 'react-bootstrap';
 
 export class Login extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      
+    };
   }
   componentDidMount() {
-    console.log(this.props);
   }
   render() {
     return (
       <div>
         <h2>Login</h2>
-        <ButtonToolbar>
-          <Button
-            bsStyle="primary" 
-            onClick={() =>{ this.props.auth.login.bind(this);
-            }}
-          >
-            Login
-          </Button> 
-        </ButtonToolbar>
+        <Button
+          bsStyle="primary"
+          onClick={this.props.auth.login}
+        >
+          Login
+        </Button>
       </div>
     );
   }
