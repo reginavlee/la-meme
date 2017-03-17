@@ -1,4 +1,5 @@
 import Auth0Lock from 'auth0-lock';
+import axios from 'axios';
 // import { browserHistory } from 'react-router-dom';
 
 export default class AuthService {
@@ -6,30 +7,52 @@ export default class AuthService {
     // Configure Auth0
     this.lock = new Auth0Lock(clientId, domain, {
       auth: {
-        redirectUrl: 'http://localhost:8080/dashboard',
+        redirect: 'http://localhost:8080/dashboard',
         responseType: 'token'
       }
     });
     // Add callback for lock `authenticated` event
     this.lock.on('authenticated', this._doAuthentication.bind(this));
-  
     // binds login functions to keep this context
     this.login = this.login.bind(this);
   }
 
   _doAuthentication(authResult) {
-    console.log('here');
-    console.log(authResult);
-    this.setToken(authResult.idToken);
+    const config = {
+      'Application-type': 'application/json'
+    };
+    this.lock.getUserInfo(authResult.accessToken, (err, profile) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      this.setToken(authResult.idToken);
+      this.setAccessToken(authResult.accessToken);
+      this.setProfile(profile);
+      setTimeout(() => {
+        this.lock.hide();
+      }, 1500);
+    });
+    axios.post('http://localhost:3000/users', {
+      token: authResult
+    }, config);
     // navigate to the home route
   }
-
-  login(cb) {
-    console.log(cb);
+  login() {
     // Call the show method to display the widget.
     this.lock.show();
   }
-
+  getProfile(cb) {
+    console.log(cb);
+    const token = this.getAccessToken();
+    console.log(token);
+    this.lock.getUserInfo(token, (err, profile) => {
+      if (err) {
+        console.log(err);
+      }
+      // cb(profile);
+    });
+  }
   loggedIn() {
     // Checks if there is a saved token and it's still valid
     return !!this.getToken();
@@ -39,15 +62,24 @@ export default class AuthService {
     // Saves user token to local storage
     localStorage.setItem('id_token', idToken);
   }
-
+  setAccessToken(accessToken) {
+    localStorage.setItem('accessToken', accessToken);
+  }
+  setProfile(profile) {
+    localStorage.setItem('profile', profile);
+  }
   getToken() {
     // Retrieves the user token from local storage
-    return localStorage.getItem('id_token');
+    const token = localStorage.getItem('id_token');
+    return token;
   }
-
+  getAccessToken() {
+    const accessToken = localStorage.getItem('accessToken');
+    return accessToken;
+  }
   logout() {
-    alert('logout should happen');
     // Clear user token and profile data from local storage
     localStorage.removeItem('id_token');
+    localStorage.removeItem('accessToken');
   }
 }

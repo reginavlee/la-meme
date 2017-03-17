@@ -15,8 +15,8 @@ module.exports = {
       socket.on('chat-message', this.handleMessage);
       socket.on('start-round', this.startRound);
       // redis related
-      socket.on('joined-dashboard', () => { redisController.incrementClientCount(socket, ioRef); });
-      socket.on('disconnect', () => { redisController.decrementClientCount(socket, ioRef); });
+      socket.on('joined-dashboard', (username) => { redisController.incrementClientCount(socket, ioRef, username); });
+      socket.on('disconnect', (username) => { redisController.decrementClientCount(socket, ioRef, username); });
     });
     io.on('joined-dashboard', () => {
       console.log('here from outside');

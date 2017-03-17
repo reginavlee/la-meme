@@ -6,6 +6,8 @@ import PlayerTable from './PlayerTable';
 
 
 const Dashboard = (props) => {
+  const userProfile = props.profile ? props.profile : {};
+
   return (
     <div>
       <Col md={6}>
@@ -20,6 +22,7 @@ const Dashboard = (props) => {
       <Col md={6} >
         <Panel>
           <h3 className="text-center"> your stats </h3>
+          <img className="text-center" src={userProfile.picture} />
         </Panel>
         <Link to="play">This takes you to chat-room page</Link>
       </Col>
