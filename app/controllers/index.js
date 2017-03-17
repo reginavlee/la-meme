@@ -11,6 +11,7 @@ module.exports = {
       res.end();
     },
     post: (req, res) => {
+      console.log(req.body);
       res.end();
     },
   },

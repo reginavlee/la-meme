@@ -100,15 +100,6 @@ class DashboardContainer extends Component {
   handleRoomData() {
   }
   render() {
-    let roomData = {rm: '', rs: 0 };
-    if (this.state.data) {
-      roomData = JSON.parse(this.state.data);
-      console.log(roomData);
-    }
-    const data = [{
-      rm: 'testRoom',
-      rs: 1
-    }];
     return (
       <Grid>
         <Row>

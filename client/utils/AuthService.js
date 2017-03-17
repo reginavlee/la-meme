@@ -12,18 +12,20 @@ export default class AuthService {
     });
     // Add callback for lock `authenticated` event
     this.lock.on('authenticated', this._doAuthentication.bind(this));
+  
     // binds login functions to keep this context
     this.login = this.login.bind(this);
   }
 
   _doAuthentication(authResult) {
-
+    console.log('here');
+    console.log(authResult);
     this.setToken(authResult.idToken);
     // navigate to the home route
-    alert('successfully auth');
   }
 
-  login() {
+  login(cb) {
+    console.log(cb);
     // Call the show method to display the widget.
     this.lock.show();
   }

@@ -13,7 +13,7 @@ roomSubClient.subscribe('room-count');
 
 const publishRoomData = function publishRoomData(socket) {
   roomSubClient.on('message', (channel, room) => {
-    console.log('publishRoomData msg called');
+    // console.log('publishRoomData msg called');
     // console.log('room that got created:', room);
     socket.broadcast.emit('rooms-data', room);
   });
@@ -104,7 +104,7 @@ module.exports = {
           .then((v) => {
             let ran = false;
             if (v > 0 && !ran) {
-              console.log('here only once');
+              // console.log('here only once');
               // roomPubClient.publish('room-count', JSON.stringify(createdRoom));
               ran = true;
             }
@@ -125,7 +125,7 @@ module.exports = {
     pubClient.hgetallAsync(stringifyRm)
       .then((updatedRoom) => {
         // pubClient.hmgetAsync(stringifyRm, 'rs').then(v => console.log(JSON.stringify(v)));
-        console.log('update here once');
+        // console.log('update here once');
         pubClient.publish('room-count', JSON.stringify(updatedRoom));
       })
       .catch(err => console.log(err));

@@ -125,7 +125,6 @@ module.exports = {
     // update redis
     const totalCount = roomData.playerCount + roomData.spectatorCount;
     if (totalCount > 0) {
-      console.log('redis updateROom called');
       // use ioRef in the future to only emit to players in dashboard/lobby area
       redisController.updateRoomCount(room, totalCount, socket);
     }
