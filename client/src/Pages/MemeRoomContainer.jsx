@@ -21,7 +21,6 @@ class Game extends Component {
     };
     this.emitMessage = this.emitMessage.bind(this);
   }
-
   getMemePhoto() {
     var that = this;
     axios.get("http://localhost:3000/api/memes")
@@ -34,7 +33,6 @@ class Game extends Component {
         console.error(error);
       });
   }
-
   componentWillMount() {
     const payload = {
       location: 'memeroom',
