@@ -135,7 +135,6 @@ class Game extends Component {
       const count = round + 1;
       this.hideMemePhoto();
       this.showMeme();
-      this.getMemePhoto();
       self.setState({
         countingDown: false,
         round: count
@@ -148,6 +147,7 @@ class Game extends Component {
   showMeme() {
     console.log('should show meme');
     document.getElementById('display-meme').removeAttribute('class');
+
   }
   /**
    * hides both players memes from everyone
@@ -182,6 +182,7 @@ class Game extends Component {
     });
     this.socket.on('intermission-over', () => {
       self.hideMeme();
+      this.getMemePhoto();
       self.showMemePhoto();
       self.setState({
         intermission: false

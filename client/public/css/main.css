@@ -9,7 +9,8 @@
 }
 
 .meme {
-  max-height: 225px;
+  width: 310px;
+  z-index: 2;
 }
 
 .meme-display {
@@ -37,5 +38,36 @@
 .inputArea {
   position: absolute;
   margin-top: 50px;
-  padding-left: 400px;
+  margin-left: 420px;
 }
+
+.caption {
+  position: absolute;
+  margin-left: 8px;
+  width: 300px;
+  z-index: 10;
+  font-size: 36px;
+  color: white;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+  font-family: Impact, "Arial Black", "sans serif";
+  top: 5px;
+  overflow: hidden;
+}
+
+.timer {
+  font-size: 36px;
+}
+
+.timer-cont {
+    margin-bottom: 20px;
+}
+
+.well {
+  background: #e3e7e8;
+  background: linear-gradient(115deg, #bac0c1, #e3e7e8, #e3e7e8, #e3e7e8, #758da0, #2f495e);
+}
+
+.roomTitle {
+  font-size: 30px;
+}
+
