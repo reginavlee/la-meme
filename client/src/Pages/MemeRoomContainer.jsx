@@ -1,16 +1,12 @@
 import React, { Component } from 'react';
-import io from 'socket.io-client';
-import genRandomTokenString from '../../utils/genRandomString';
-import MemeRoom from '../components/MemeRoom';
 import axios from 'axios';
 
+import MemeRoom from '../components/MemeRoom';
 
 class Game extends Component {
   constructor(props) {
     super(props);
-    const token = genRandomTokenString();
     this.state = {
-      authToken: token,
       currentRoom: '',
       playerCount: 0,
       spectatorCount: 0,
@@ -46,7 +42,6 @@ class Game extends Component {
       this.removeUser();
     };
   }
-
   componentDidMount() {
     this.listenforCountdown();
     this.listenForConnectionType();
