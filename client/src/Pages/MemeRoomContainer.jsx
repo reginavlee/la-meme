@@ -20,13 +20,13 @@ class Game extends Component {
       memePhoto: []
     };
     this.emitMessage = this.emitMessage.bind(this);
-    this.getMemePhoto = this.getMemePhoto.bind(this);
   }
 
   getMemePhoto() {
+    var that = this;
     axios.get("http://localhost:3000/api/memes")
       .then((results) => {
-        this.setState({
+        that.setState({
           memePhoto: results.data
         });
       })
@@ -34,7 +34,6 @@ class Game extends Component {
         console.error(error);
       });
   }
-
 
   componentWillMount() {
     const payload = {
@@ -93,7 +92,7 @@ class Game extends Component {
     this.props.socket.emit('create-room', 'testRoom');
     this.props.socket.on('join', (roomname) => {
       self.setState({
-        currentRoom: roomname
+        currentRoom: roomname,
       });
     });
   }
@@ -135,7 +134,9 @@ class Game extends Component {
     this.props.socket.on('round-over', (round) => {
       console.log(`round ${round} is over!`);
       const count = round + 1;
+      this.hideMemePhoto();
       this.showMeme();
+      this.getMemePhoto();
       self.setState({
         countingDown: false,
         round: count
@@ -150,12 +151,26 @@ class Game extends Component {
     document.getElementById('display-meme').removeAttribute('class');
   }
   /**
-   * hides both players memes to everyone
+   * hides both players memes from everyone
    */
   hideMeme() {
     console.log('should hide meme');
     document.getElementById('display-meme').className = 'meme-display';
   }
+
+  /**
+   * shows plain photo to everyone
+   */
+  showMemePhoto() {
+    document.getElementById('photo').removeAttribute('class');
+  }
+  /**
+   * hides photo
+   */
+  hideMemePhoto() {
+    document.getElementById('photo').className = 'photo-display';
+  }
+
   /**
    * listens for intermission & game-over from the server countdown
    */
@@ -168,6 +183,7 @@ class Game extends Component {
     });
     this.props.socket.on('intermission-over', () => {
       self.hideMeme();
+      self.showMemePhoto();
       self.setState({
         intermission: false
       });

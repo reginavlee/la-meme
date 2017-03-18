@@ -13,8 +13,14 @@ class GameDisplay extends Component {
     return (
       <div>
 
-        <Col xs={6} md={4}>
-          <Image className="meme" src= {this.props.memePhoto} />
+        <Col xs={12} md={12}>
+        <div id="photo">
+          <Image className="photo" src= {this.props.memePhoto} />
+          { this.props.connectionType === 'player' ?
+          <GameInput handleMessage={this.props.handleMessage} />
+        : '' }
+          <GameInput/>
+          </div>
         </Col>
 
         <Well className="meme-content" bsSize="large">
@@ -33,9 +39,6 @@ class GameDisplay extends Component {
             {/* <ul id="messages" />*/}
           </div>
         </Well>
-        { this.props.connectionType === 'player' ?
-          <GameInput handleMessage={this.props.handleMessage} />
-        : '' }
       </div>
     );
   }
