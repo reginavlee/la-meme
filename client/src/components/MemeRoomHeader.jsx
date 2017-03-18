@@ -22,6 +22,7 @@ const MemeRoomHeader = (props) => {
           <p className="text-center">{props.currentTime}</p>
           <div className="text-center">
             <Link to="/">This takes you to home page</Link>
+            <Link to="/dashboard">Back to dashboard</Link>
           </div>
         </Col>
         <Col xs={4} md={4}>

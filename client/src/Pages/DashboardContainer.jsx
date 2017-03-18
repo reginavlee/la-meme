@@ -11,60 +11,42 @@ class DashboardContainer extends Component {
     super(props);
     const token = genRandomTokenString();
     this.state = {
-      authToken: token,
       users: new Map(),
       onlineCount: 0,
       newUser: false
     };
   }
   /**
-   * Init connect to socket.io
+   * Init user creation on the server
+   * emit to the server a user has joined dashboard/lobby
+   * setup listener to listen for window close (emit left dashboard)
    */
   componentWillMount() {
-    // there will be duplicates inside of the user-list untill we get unique usernames going ~
-    this.socket = io('http://localhost:3000');
+    this.createUser(this.props.profile.username);
+    this.emitJoinedDashboard(this.props.profile.username);
     window.onbeforeunload = () => {
       this.emitLeftDashboard();
     };
   }
+  /**
+   * everytime the component mounts, lets listen for the global online count and setState accordingly
+   */
   componentDidMount() {
-    this.props.auth.lock.getUserInfo(localStorage.getItem('accessToken'), (err, profile) => {
-      if (err) {
-        console.log(err);
-      }
+    this.props.socket.on('new-user', (count) => {
       this.setState({
-        profile
+        onlineCount: count
       });
     });
-    // console.log(this.props);
-    // if (this.props.profile) {
-    //   this.createUser(this.props.profile.username);
-    //   this.emitJoinedDashboard();
-    //   this.listenForGlobalCount();
-    //   this.listenForRoomData();
-    //   this.newUserJoined();
-    //   this.handleRoomData();
-    // }
-    // if (this.state.username) {
-    // }
-    // this.createUser(this.props.profile.username);
-    // this.emitJoinedDashboard();
-    // this.listenForGlobalCount();
-    // this.listenForRoomData();
-    // this.newUserJoined();
-    // this.handleRoomData();
-    this.socket.on('test', (test) => {
-      console.log(test);
-    });
+    this.listenForGlobalCount();
   }
   componentWillReceiveProps(nextProps) {
-    console.log(this.props);
-    this.createUser(nextProps.profile.username);
-    this.emitJoinedDashboard(nextProps.profile.username);
     this.listenForGlobalCount();
     this.listenForRoomData();
     this.newUserJoined();
     this.handleRoomData();
+  }
+  componentDidUpdate(prevProps, prevState) {
+    console.log(this.state);
   }
   componentWillUnmount() {
     this.emitLeftDashboard();
@@ -74,7 +56,7 @@ class DashboardContainer extends Component {
    * {Global-Event} A new user has joined the socket.io server, notify user 
    */
   newUserJoined() {
-    this.socket.on('new-user', (d) => {
+    this.props.socket.on('new-user', (d) => {
       console.log(d, 'recieved new user event');
       this.setState({
         newUser: true
@@ -90,26 +72,24 @@ class DashboardContainer extends Component {
     * create a user on the server using Auth0 token
     */
   createUser(username) {
-    console.log(username);
     const payload = {
-      username,
-      authToken: this.state.authToken
+      username
     };
-    this.socket.emit('create-user', payload);
+    this.props.socket.emit('create-user', payload);
   }
   emitJoinedDashboard(username) {
-    this.socket.emit('joined-dashboard', username);
+    this.props.socket.emit('joined-dashboard', username);
   }
   emitLeftDashboard(username) {
-    this.socket.emit('left-dashboard');
+    this.props.socket.emit('left-dashboard');
   }
   listenForGlobalCount() {
     const self = this;
-    this.socket.on('connected-user', (count, userInfo) => {
+    this.props.socket.on('connected-user', (count, userInfo, username) => {
       // grab newly connected users info
-      const { sid, un, ol } = userInfo;
+      const { sid, location } = userInfo;
       const connectedUsers = this.state.users;
-      connectedUsers.set(sid, { un, ol });
+      connectedUsers.set(username, { sid, location });
       self.setState({
         onlineCount: count,
         users: connectedUsers
@@ -117,7 +97,7 @@ class DashboardContainer extends Component {
     });
   }
   listenForRoomData() {
-    this.socket.on('rooms-data', (data) => {
+    this.props.socket.on('rooms-data', (data) => {
       this.setState({
         data
       });

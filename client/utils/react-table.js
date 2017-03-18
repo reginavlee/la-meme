@@ -1,7 +1,11 @@
 const columns = [
   {
     header: 'Username',
-    accessor: 'name'
+    accessor: 'username'
+  },
+  {
+    header: 'Location',
+    accessor: 'location',
   },
   {
     header: 'Socketid',

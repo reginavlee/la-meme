@@ -6,22 +6,28 @@ import {
   Redirect,
   Switch
 } from 'react-router-dom';
+import io from 'socket.io-client';
 
+/* Components */
 import Navigation from './Navigation';
 import Home from '../Pages/HomeContainer';
 import Dashboard from '../Pages/DashboardContainer';
 import MemeRoomContainer from '../Pages/MemeRoomContainer';
-import Login from '../Pages/Login';
+import LoginPage from '../Pages/Login';
 
+/* Auth0 Service */
 import AuthService from '../../utils/AuthService';
 
+/* Socket.IO Connection */
+const socket = io('http://localhost:3000');
+
 // handles our protected routes
-function PrivateRoute({ component: Component, authed, authService, userProfile, logout, ...rest }) {
+function PrivateRoute({ component: Component, authed, authService, userProfile, socket, logout, ...rest }) {
   return (
     <Route
       {...rest}
       render={(props) => authed === true
-        ? <Component logout={logout} profile={userProfile} auth={authService} {...props} />
+        ? <Component socket={socket} logout={logout} profile={userProfile} auth={authService} {...props} />
         : <Redirect to={{ pathname: '/login', state: { from: props.location } }} />}
     />
   );
@@ -46,37 +52,49 @@ class App extends Component {
       auth: new AuthService('KhDTuf4lq48s3Db6kEvHHaLGaQCb7ETk', 'lameme.auth0.com'),
       authed: false,
     };
+    this.getUsersProfile = this.getUsersProfile.bind(this);
     this.logout = this.logout.bind(this);
     this.login = this.login.bind(this);
   }
   componentWillMount() {
-    this.state.auth.lock.on('authenticated', () => {
+    // attempt to grab profile from localStorage
+    // if it exists, setState, if not hit auth0 api for profile
+    // solves refresh issue~
+    const profile = JSON.parse(localStorage.getItem('profile'));
+    if (profile.username) {
       this.setState({
-        authed: true
+        authed: true,
+        profile
       });
-      if (this.state.auth.loggedIn()) {
-        this.setState({
-          authed: true
-        });
-      }
-      // console.log(localStorage.getItem('accessId'));
-      // this.state.auth.lock.getUserInfo()
-    });
+    } else {
+      this.getUsersProfile();
+    }
   }
-  componentDidMount(){
-    // check to see if user is logged in.
-    if (this.state.auth.loggedIn()) {
+  componentDidMount() {
+    console.log(this.state);
+
+  }
+  componentWillUpdate(nextProps, nextState) {
+    console.log(nextState);
+  }
+  componentDidUpdate() {
+    if (this.state.userProfile) {
       this.setState({
         authed: true
       });
     }
-    // lets grab their credentials from Auth0
-    this.state.auth.lock.getUserInfo(localStorage.getItem('accessToken'), (err, profile) => {
-      if (err) {
-        console.log(err);
-      }
-      this.setState({
-        userProfile: profile
+  }
+  getUsersProfile() {
+    this.state.auth.lock.on('authenticated', (authResult) => {
+      this.state.auth.lock.getUserInfo(authResult.accessToken, (err, profile) => {
+        if (err) {
+          console.log(err);
+        }
+        console.log(profile);
+        this.setState({
+          authed: true,
+          profile
+        });
       });
     });
   }
@@ -87,7 +105,8 @@ class App extends Component {
   }
   logout() {
     this.setState({
-      authed: false
+      authed: false,
+      profile: null
     });
   }
   render() {
@@ -98,11 +117,13 @@ class App extends Component {
           <Row>
             <Col xs={12} md={8} mdOffset={1}>
               <div>
+                { this.state.authed ? <h1>Logged in as: {this.state.profile.username} </h1> : 'please login: ' }
                 <Switch>
+                  {/*<LoginPage login={this.login} />*/}
                   <Route exact path="/" component={Home} />
-                  <PublicRoute login={this.login} authService={this.state.auth} authed={this.state.authed} path="/login" component={Login} />
-                  <PrivateRoute logout={this.logout} userProfile={this.state.userProfile} authService={this.state.auth} authed={this.state.authed} path="/dashboard" component={Dashboard} />
-                  <PrivateRoute authed={this.state.authed} path="/play" component={MemeRoomContainer} />
+                  <PublicRoute login={this.login} authService={this.state.auth} authed={this.state.authed} path="/login" component={LoginPage} />
+                  <PrivateRoute socket={socket} logout={this.logout} userProfile={this.state.profile} authService={this.state.auth} authed={this.state.authed} path="/dashboard" component={Dashboard} />
+                  <PrivateRoute socket={socket} authed={this.state.authed} userProfile={this.state.profile} path="/play" component={MemeRoomContainer} />
                   <Route render={() => <h1> Page not found </h1>} />
                 </Switch>
               </div>

@@ -8,6 +8,7 @@ const Sequelize = require('sequelize');
 
 const db = new Sequelize('lameme', 'Jahosh', '', {
   host: 'localhost',
+  logging: false,
   dialect: 'postgres',
   pool: {
     max: 5,

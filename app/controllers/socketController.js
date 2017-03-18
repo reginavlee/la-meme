@@ -9,43 +9,38 @@ module.exports = {
     self = this;
     io.on('connection', (socket) => {
       ioRef = io;
+      console.log('connection', socket.id);
+      // creates a user within our redis store
       socket.on('create-user', this.createUser);
+
+      // creates a room within our redis store
       socket.on('create-room', this.createRoom);
-      socket.on('forceDisconnect', this.removeUser);
+      socket.on('location:memeroom', this.joinedMemeRoom);
+      socket.on('left-meme-room', this.removeUser);
       socket.on('chat-message', this.handleMessage);
       socket.on('start-round', this.startRound);
       // redis related
       socket.on('joined-dashboard', (username) => { redisController.incrementClientCount(socket, ioRef, username); });
       socket.on('disconnect', (username) => { redisController.decrementClientCount(socket, ioRef, username); });
-    });
-    io.on('joined-dashboard', () => {
-      console.log('here from outside');
+      socket.on('left-dashboard', () => { console.log('left') });
     });
   },
   createUser(user) {
+    const { username } = user;
     redisController.addUser(user, this.id);
-    ioRef.emit('new-user', 1);
-  },
-  removeUser(user) {
-    const { room, connectionType } = user;
-    this.leave('testRoom', (err) => {
-      if (err) {
-        throw new Error(err);
-      }
-      // handles edge case if theres only one use in a room
-      try {
-        if (connectionType === 'player') {
-          self.removePlayer(room, this.id);
-        } else {
-          self.removeSpectator(room, this);
-        }
-        self.emitRoomOccupancy(room);
-      } catch (error) {
-        console.log(`Room: ${room} is empty, will be deleted`);
-        // no one else is in room, we can delete it from our Map
-        Rooms.delete(room);
-      }
-    });
+    if (Users.get(username)) {
+      const userData = Users.get(username);
+      userData.sid = this.id;
+      Users.set(username, userData);
+    } else {
+      const userData = {};
+      userData.sid = this.id;
+      userData.location = 'dashboard';
+      Users.set(username, userData);
+    }
+    const userData = Users.get(username);
+    ioRef.emit('connected-user', Users.size, userData, username);
+    ioRef.emit('new-user', Users.size);
   },
   createRoom(room) {
     // join client created room;
@@ -54,7 +49,7 @@ module.exports = {
         throw new Error(err);
       }
       // add the room to our map of stored rooms (eventually will be a database);
-      self.addRoomToMap(room, this);
+      self.addRoomToRedis(room, this);
       // emit successfully join
       self.emitSuccessfulJoin(room);
       // grab room so we can determine whether user is a player or spectator
@@ -71,7 +66,29 @@ module.exports = {
       self.emitRoomOccupancy(room, this);
     });
   },
-  addRoomToMap(room, socket) {
+  removeUser(userObj) {
+    const { room, connectionType, username } = userObj;
+
+    this.leave('testRoom', (err) => {
+      if (err) {
+        throw new Error(err);
+      }
+      // handles edge case if theres only one use in a room
+      try {
+        if (connectionType === 'player') {
+          self.removePlayer(room, this.id);
+        } else {
+          self.removeSpectator(room, this.id);
+        }
+        self.emitRoomOccupancy(room, this);
+      } catch (error) {
+        console.log(`Room: ${room} is empty, will be deleted`);
+        // no one else is in room, we can delete it from our Map
+        Rooms.delete(room);
+      }
+    });
+  },
+  addRoomToRedis(room, socket) {
     // if room doesn't already exist, lets create one
     if (!Rooms.get(room)) {
       const roomData = {};
@@ -82,6 +99,7 @@ module.exports = {
       roomData.active = false;
       redisController.addRoom(room, roomData, socket);
       Rooms.set(room, roomData);
+      console.log(Rooms);
     }
     // if room already exists, user can be added to it
   },
@@ -109,7 +127,7 @@ module.exports = {
     socket.emit('status', 'spectator');
     console.log('from add spectator', Rooms);
   },
-  removeSpectator(room, socket) {
+  removeSpectator(room, socketId) {
     const roomData = Rooms.get(room);
     delete roomData.spectators[socket.id];
     roomData.spectatorCount -= 1;
@@ -121,6 +139,7 @@ module.exports = {
       playerCount: roomData.playerCount,
       spectatorCount: roomData.spectatorCount
     };
+    console.log(Rooms);
     ioRef.to(room).emit('occupancy', payload);
     // update redis
     const totalCount = roomData.playerCount + roomData.spectatorCount;
@@ -128,6 +147,13 @@ module.exports = {
       // use ioRef in the future to only emit to players in dashboard/lobby area
       redisController.updateRoomCount(room, totalCount, socket);
     }
+  },
+  joinedMemeRoom(payload) {
+    const { location, user } = payload;
+    const userData = Users.get(user);
+    userData.location = location;
+    Users.set(user, userData);
+    console.log(Users);
   },
   handleMessage(message) {
     const { room } = message;
