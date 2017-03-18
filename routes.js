@@ -1,15 +1,13 @@
 const router = require('express').Router();
 const cors = require('cors');
 const controller = require('./app/controllers/index');
-const app = require('./server').app;
-
-// const socketController = require('./app/controllers/socketController');
 
 /*
  * {Client} Routes
  */
 router.get('/users', controller.users.get);
-router.post('/users', controller.users.post);
+router.options('/users', cors());
+router.post('/users', cors(), controller.users.post);
 
 router.get('/users/:id', controller.users.getById);
 // router.post('/join/:roomId', socketController.joinRoom);

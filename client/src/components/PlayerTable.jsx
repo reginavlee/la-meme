@@ -11,14 +11,13 @@ class PlayerTable extends Component {
     };
   }
   render() {
+    console.log(this.props.data, 'from playertable');
     const dataHolder = [];
-    for (const [sid, un] of this.props.data) {
-      if (un.ol === '1') {
-        const name = un.un;
-        dataHolder.push({ sid, name });
-      }
+    for (const [username, data ] of this.props.data) {
+        dataHolder.push({ username, location: data.location, sid: data.sid });
     }
     const data = dataHolder;
+    console.log(dataHolder)
     return (
       <ReactTable
         classsName="-striped"
@@ -26,9 +25,6 @@ class PlayerTable extends Component {
         style={style}
         columns={columns}
         defaultPageSize={10}
-        onChange={(state, instance) => {
-          console.log(state, instance);
-        }}
       />
     );
   }

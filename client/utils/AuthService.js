@@ -1,4 +1,5 @@
 import Auth0Lock from 'auth0-lock';
+import axios from 'axios';
 // import { browserHistory } from 'react-router-dom';
 
 export default class AuthService {
@@ -6,7 +7,7 @@ export default class AuthService {
     // Configure Auth0
     this.lock = new Auth0Lock(clientId, domain, {
       auth: {
-        redirectUrl: 'http://localhost:8080/dashboard',
+        redirect: 'http://localhost:8080/dashboard',
         responseType: 'token'
       }
     });
@@ -17,17 +18,25 @@ export default class AuthService {
   }
 
   _doAuthentication(authResult) {
-
-    this.setToken(authResult.idToken);
-    // navigate to the home route
-    alert('successfully auth');
+    this.lock.getUserInfo(authResult.accessToken, (err, profile) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      this.setToken(authResult.idToken);
+      this.setAccessToken(authResult.accessToken);
+      this.setProfile(profile);
+      setTimeout(() => {
+        this.lock.hide();
+      }, 1500);
+    });
   }
-
   login() {
     // Call the show method to display the widget.
     this.lock.show();
   }
-
+  getProfile(cb) {
+  }
   loggedIn() {
     // Checks if there is a saved token and it's still valid
     return !!this.getToken();
@@ -37,15 +46,25 @@ export default class AuthService {
     // Saves user token to local storage
     localStorage.setItem('id_token', idToken);
   }
-
+  setAccessToken(accessToken) {
+    localStorage.setItem('accessToken', accessToken);
+  }
+  setProfile(profile) {
+    localStorage.setItem('profile', JSON.stringify(profile));
+  }
   getToken() {
     // Retrieves the user token from local storage
-    return localStorage.getItem('id_token');
+    const token = localStorage.getItem('id_token');
+    return token;
   }
-
+  getAccessToken() {
+    const accessToken = localStorage.getItem('accessToken');
+    return accessToken;
+  }
   logout() {
-    alert('logout should happen');
     // Clear user token and profile data from local storage
     localStorage.removeItem('id_token');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('profile');
   }
 }

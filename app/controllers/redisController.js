@@ -3,9 +3,7 @@ const pubClient = require('../redis/redisConnect').createClient();
 const subClient = require('../redis/redisConnect').createClient();
 const roomPubClient = require('../redis/redisConnect').createClient();
 const roomSubClient = require('../redis/redisConnect').createClient();
-
 const once = require('lodash').once;
-
 // init global count to 0
 pubClient.setAsync('gc', 0).then((v) => { console.log('global count initialized, ', v); });
 subClient.subscribe('global-count');
@@ -13,17 +11,18 @@ roomSubClient.subscribe('room-count');
 
 const publishRoomData = function publishRoomData(socket) {
   roomSubClient.on('message', (channel, room) => {
-    console.log('publishRoomData msg called');
-    // console.log('room that got created:', room);
+    console.log('room data to send to dashboard', room);
     socket.broadcast.emit('rooms-data', room);
   });
 };
 
-const publishDashboardCount = function publishDashboardCount(socket, ioRef) {
+const publishDashboardCount = function publishDashboardCount(socket, ioRef, username) {
+  console.log('publish dashboard called', username);
+  socket.username = username;
   subClient.on('message', (channel, count) => {
     // globally share count & users info to be rendered
-    pubClient.hgetallAsync(socket.id)
-      .then(userInfo => { ioRef.emit('connected-user', count, userInfo); console.log(userInfo);})
+    pubClient.hgetallAsync(username)
+      // .then(userInfo => { ioRef.emit('connected-user', count, userInfo); })
       .catch((err) => {
         if (err) {
           console.log(err);
@@ -33,10 +32,27 @@ const publishDashboardCount = function publishDashboardCount(socket, ioRef) {
 };
 
 module.exports = {
+  /**
+   * responsible for adding users to redis
+   * @param {object} user 
+   * @param {string} socketId 
+   */
   addUser(user, socketId) {
     const { username } = user;
-    pubClient.hmsetAsync(socketId, 'un', username, 'sid', socketId, 'ol', '1')
-      .then(v => console.log(v))
+    // first lets check to see if user already exists within redis, if so we only need to update
+    // their socketId
+    pubClient.hmgetAsync(username, 'un').then((un) => {
+      if (un !== null) {
+        pubClient.hmsetAsync(username, 'sid', socketId).then((r) => {
+          console.log(r);
+          console.log('re-set socketId');
+        });
+      }
+    });
+
+    // if the username doesn't already exists in redis, we'll insert a new hash into redis
+    pubClient.hmsetAsync(username, 'un', username, 'sid', socketId, 'ol', '1')
+      .then(v => console.log('here', v))
       .catch((err) => {
         if (err) {
           console.log(err);
@@ -44,11 +60,30 @@ module.exports = {
       });
   },
   /**
+   *
+   * @param {object} room
+   * @param {object} roomData
+   * @param {string} socket
+   */
+  addRoom(room, roomData, socket) {
+    // first check to see if room exists
+    roomPubClient.hgetallAsync(room).then((roomExists) => {
+      if (roomExists !== null) {
+        // increment room count?
+      }
+    });
+    roomPubClient.hmsetAsync(room, 'rm', room, 'rs', 0)
+      .catch((err) => {
+        if (err) throw new Error(err);
+      });
+    const callOnce = once(publishRoomData);
+    callOnce(socket);
+  },
+  /**
    * We will use redis to store a global count of people connected to our socket.io server
    * All of these operations are atomic, meaning they are perfect for quickly changing data
    */
-  incrementClientCount(socket, ioRef) {
-    console.log('user connected');
+  incrementClientCount(socket, ioRef, username) {
     pubClient.getAsync('gc')
     .then((gc) => {
       if (Number(gc) >= 0) {
@@ -62,16 +97,13 @@ module.exports = {
     .catch((err) => {
       if (err) console.log(err);
     });
-    publishDashboardCount(socket, ioRef);
+    publishDashboardCount(socket, ioRef, username);
   },
-  decrementClientCount(socket, ioRef) {
+  decrementClientCount(socket, ioRef, username) {
+    console.log(username);
+    console.log(socket.username);
     console.log('user disconnected');
-
-    // set key 'ol' to equal 0 ~ meaning offline  
-    // pubClient.delAsync(socket.id)
-    //   .then(v => console.log('deleted', v));
-    pubClient.hset(socket.id, 'ol', '0');
-
+    pubClient.hset(socket.username, 'ol', '0');
 
     pubClient.getAsync('gc')
     .then((gc) => {
@@ -91,41 +123,14 @@ module.exports = {
       }
     });
   },
-  addRoom(room, roomData, socket) {
-    const stringifyRm = JSON.stringify(room);
-    roomPubClient.hmsetAsync(stringifyRm, 'rm', room, 'rs', 0)
-    .catch((err) => {
-      if (err) throw new Error(err);
-    });
-
-    roomPubClient.hgetallAsync(stringifyRm)
-      .then((createdRoom) => {
-        roomPubClient.hmgetAsync(stringifyRm, 'rs')
-          .then((v) => {
-            let ran = false;
-            if (v > 0 && !ran) {
-              console.log('here only once');
-              // roomPubClient.publish('room-count', JSON.stringify(createdRoom));
-              ran = true;
-            }
-          });
-      })
-      .catch(err => console.log(err));
-
-    const callOnce = once(publishRoomData);
-    callOnce(socket);
-  },
   updateRoomCount(room, totalCount, socket) {
-    console.log(room, totalCount);
-    const stringifyRm = JSON.stringify(room);
-    pubClient.hmsetAsync(stringifyRm, 'rm', room, 'rs', totalCount)
+    console.log('from inside updateRoomCount: ', room, totalCount);
+    pubClient.hmsetAsync(room, 'rm', room, 'rs', totalCount)
       .catch((err) => {
         if (err) throw new Error(err);
       });
-    pubClient.hgetallAsync(stringifyRm)
+    pubClient.hgetallAsync(room)
       .then((updatedRoom) => {
-        // pubClient.hmgetAsync(stringifyRm, 'rs').then(v => console.log(JSON.stringify(v)));
-        console.log('update here once');
         pubClient.publish('room-count', JSON.stringify(updatedRoom));
       })
       .catch(err => console.log(err));

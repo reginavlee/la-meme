@@ -11,35 +11,42 @@ class DashboardContainer extends Component {
     super(props);
     const token = genRandomTokenString();
     this.state = {
-      authToken: token,
-      username: `Jahosh${token}`,
       users: new Map(),
       onlineCount: 0,
       newUser: false
     };
   }
   /**
-   * Init connect to socket.io
+   * Init user creation on the server
+   * emit to the server a user has joined dashboard/lobby
+   * setup listener to listen for window close (emit left dashboard)
    */
   componentWillMount() {
-    // there will be duplicates inside of the user-list untill we get unique usernames going ~
-    this.socket = io('http://localhost:3000');
-    this.createUser();
+    this.createUser(this.props.profile.username);
+    this.emitJoinedDashboard(this.props.profile.username);
     window.onbeforeunload = () => {
       this.emitLeftDashboard();
     };
   }
+  /**
+   * everytime the component mounts, lets listen for the global online count and setState accordingly
+   */
   componentDidMount() {
-    console.log(this.props);
-    console.log(this.props.auth.loggedIn());
-    this.emitJoinedDashboard();
+    this.props.socket.on('new-user', (count) => {
+      this.setState({
+        onlineCount: count
+      });
+    });
+    this.listenForGlobalCount();
+  }
+  componentWillReceiveProps(nextProps) {
     this.listenForGlobalCount();
     this.listenForRoomData();
     this.newUserJoined();
-    this.socket.on('test', (test) => {
-      console.log(test);
-    });
     this.handleRoomData();
+  }
+  componentDidUpdate(prevProps, prevState) {
+    console.log(this.state);
   }
   componentWillUnmount() {
     this.emitLeftDashboard();
@@ -49,7 +56,7 @@ class DashboardContainer extends Component {
    * {Global-Event} A new user has joined the socket.io server, notify user 
    */
   newUserJoined() {
-    this.socket.on('new-user', (d) => {
+    this.props.socket.on('new-user', (d) => {
       console.log(d, 'recieved new user event');
       this.setState({
         newUser: true
@@ -64,26 +71,25 @@ class DashboardContainer extends Component {
   /**
     * create a user on the server using Auth0 token
     */
-  createUser() {
+  createUser(username) {
     const payload = {
-      username: this.state.username,
-      authToken: this.state.authToken
+      username
     };
-    this.socket.emit('create-user', payload);
+    this.props.socket.emit('create-user', payload);
   }
-  emitJoinedDashboard() {
-    this.socket.emit('joined-dashboard');
+  emitJoinedDashboard(username) {
+    this.props.socket.emit('joined-dashboard', username);
   }
-  emitLeftDashboard() {
-    this.socket.emit('left-dashboard');
+  emitLeftDashboard(username) {
+    this.props.socket.emit('left-dashboard');
   }
   listenForGlobalCount() {
     const self = this;
-    this.socket.on('connected-user', (count, userInfo) => {
+    this.props.socket.on('connected-user', (count, userInfo, username) => {
       // grab newly connected users info
-      const { sid, un, ol } = userInfo;
+      const { sid, location } = userInfo;
       const connectedUsers = this.state.users;
-      connectedUsers.set(sid, { un, ol });
+      connectedUsers.set(username, { sid, location });
       self.setState({
         onlineCount: count,
         users: connectedUsers
@@ -91,7 +97,7 @@ class DashboardContainer extends Component {
     });
   }
   listenForRoomData() {
-    this.socket.on('rooms-data', (data) => {
+    this.props.socket.on('rooms-data', (data) => {
       this.setState({
         data
       });
@@ -100,15 +106,6 @@ class DashboardContainer extends Component {
   handleRoomData() {
   }
   render() {
-    let roomData = {rm: '', rs: 0 };
-    if (this.state.data) {
-      roomData = JSON.parse(this.state.data);
-      console.log(roomData);
-    }
-    const data = [{
-      rm: 'testRoom',
-      rs: 1
-    }];
     return (
       <Grid>
         <Row>
@@ -121,6 +118,7 @@ class DashboardContainer extends Component {
             <Dashboard
               onlineCount={this.state.onlineCount}
               playerTableData={this.state.users}
+              profile={this.props.profile}
             />
           </Col>
         </Row>
