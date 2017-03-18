@@ -9,7 +9,6 @@ import Dashboard from '../components/Dashboard';
 class DashboardContainer extends Component {
   constructor(props) {
     super(props);
-    const token = genRandomTokenString();
     this.state = {
       users: new Map(),
       onlineCount: 0,
@@ -46,7 +45,6 @@ class DashboardContainer extends Component {
     this.handleRoomData();
   }
   componentDidUpdate(prevProps, prevState) {
-    console.log(this.state);
   }
   componentWillUnmount() {
     this.emitLeftDashboard();
@@ -78,10 +76,19 @@ class DashboardContainer extends Component {
     this.props.socket.emit('create-user', payload);
   }
   emitJoinedDashboard(username) {
-    this.props.socket.emit('joined-dashboard', username);
+    console.log('joined dashboard!');
+    const payload = {
+      user: username,
+      location: 'dashboard'
+    };
+    this.props.socket.emit('location:dashboard', payload);
   }
   emitLeftDashboard(username) {
-    this.props.socket.emit('left-dashboard');
+    const payload = {
+      user: username,
+      location: ''
+    };
+    this.props.socket.emit('left-dashboard', payload);
   }
   listenForGlobalCount() {
     const self = this;
@@ -97,11 +104,11 @@ class DashboardContainer extends Component {
     });
   }
   listenForRoomData() {
-    this.props.socket.on('rooms-data', (data) => {
-      this.setState({
-        data
-      });
-    });
+    // this.props.socket.on('rooms-data', (data) => {
+    //   this.setState({
+    //     data
+    //   });
+    // });
   }
   handleRoomData() {
   }

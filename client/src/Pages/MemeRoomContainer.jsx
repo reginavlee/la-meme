@@ -40,16 +40,13 @@ class Game extends Component {
     };
     this.props.socket.emit('location:memeroom', payload);
     this.createRoom();
-    this.renderMessage();
     this.RoomOccupancy();
     this.getMemePhoto();
     window.onbeforeunload = () => {
       this.removeUser();
     };
   }
-  /**
-   * fire off socket connection on component mounting
-   */
+
   componentDidMount() {
     this.listenforCountdown();
     this.listenForConnectionType();
@@ -84,6 +81,7 @@ class Game extends Component {
   }
   /**
    * creates a room on the server to hold sockets
+   * listens for a join event and updates user states
    */
   createRoom() {
     const self = this;
@@ -227,7 +225,6 @@ class Game extends Component {
     });
   }
   render() {
-    console.log(this.state, this.props);
     return (
       <MemeRoom
         currentRoom={this.state.currentRoom}

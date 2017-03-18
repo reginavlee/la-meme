@@ -11,13 +11,11 @@ class PlayerTable extends Component {
     };
   }
   render() {
-    console.log(this.props.data, 'from playertable');
     const dataHolder = [];
-    for (const [username, data ] of this.props.data) {
-        dataHolder.push({ username, location: data.location, sid: data.sid });
+    for (const [username, data] of this.props.data) {
+      dataHolder.push({ username, location: data.location, sid: data.sid });
     }
     const data = dataHolder;
-    console.log(dataHolder)
     return (
       <ReactTable
         classsName="-striped"

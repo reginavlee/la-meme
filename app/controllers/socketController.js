@@ -9,26 +9,30 @@ module.exports = {
     self = this;
     io.on('connection', (socket) => {
       ioRef = io;
-      console.log('connection', socket.id);
-      // creates a user within our redis store
+      // creates a user within our map
       socket.on('create-user', this.createUser);
-
       // creates a room within our redis store
       socket.on('create-room', this.createRoom);
       socket.on('location:memeroom', this.joinedMemeRoom);
+      socket.on('location:dashboard', this.joinedDashboard);
       socket.on('left-meme-room', this.removeUser);
+      // socket.on('left-dashboard', this.leftDashboard);
       socket.on('chat-message', this.handleMessage);
       socket.on('start-round', this.startRound);
       // redis related
-      socket.on('joined-dashboard', (username) => { redisController.incrementClientCount(socket, ioRef, username); });
       socket.on('disconnect', this.handleDisconnect);
-      socket.on('left-dashboard', () => { console.log('left') });
     });
   },
   createUser(user) {
     const { username } = user;
-    this.username = username
-    redisController.addUser(user, this.id);
+
+    // add username to this socket.connection, 
+    // on disconnect we can use it to identify user to remove
+    this.username = username;
+    // redisController.addUser(user, this.id);
+
+    // If the user already exists, lets just update their socket.id
+    // else lets create a new user in our Users map
     if (Users.get(username)) {
       const userData = Users.get(username);
       userData.sid = this.id;
@@ -39,6 +43,7 @@ module.exports = {
       userData.location = 'dashboard';
       Users.set(username, userData);
     }
+    // Lets update the global dashboard to include this user
     const userData = Users.get(username);
     console.log(Users);
     ioRef.emit('connected-user', Users.size, userData, username);
@@ -63,7 +68,6 @@ module.exports = {
         // add player as a spectator to our Map
         self.addSpectator(room, this);
       }
-
       // send back new room occupancy to all clients in that particular room
       self.emitRoomOccupancy(room, this);
     });
@@ -75,7 +79,8 @@ module.exports = {
   },
   removeUser(userObj) {
     const { room, connectionType, username } = userObj;
-
+    console.log('left meme-room');
+ 
     this.leave('testRoom', (err) => {
       if (err) {
         throw new Error(err);
@@ -92,6 +97,12 @@ module.exports = {
         console.log(`Room: ${room} is empty, will be deleted`);
         // no one else is in room, we can delete it from our Map
         Rooms.delete(room);
+      }
+      const RoomData = Rooms.get(room);
+      console.log(RoomData);
+      if (RoomData.playerSize < 1) {
+        Rooms.delete(room);
+        console.log('room deleted', room);
       }
     });
   },
@@ -125,6 +136,7 @@ module.exports = {
     delete roomData.players[socketId];
     roomData.playerCount -= 1;
     Rooms.set(room, roomData);
+    console.log('removed player: ', Rooms);
   },
   addSpectator(room, socket) {
     const roomData = Rooms.get(room);
@@ -139,6 +151,7 @@ module.exports = {
     delete roomData.spectators[socket.id];
     roomData.spectatorCount -= 1;
     Rooms.set(room, roomData);
+    console.log('removed spectator: ', Rooms);
   },
   emitRoomOccupancy(room, socket) {
     const roomData = Rooms.get(room);
@@ -160,7 +173,16 @@ module.exports = {
     const userData = Users.get(user);
     userData.location = location;
     Users.set(user, userData);
-    console.log(Users);
+    // update global dashboard to reflect players location
+    ioRef.emit('connected-user', Users.size, userData, user);
+  },
+  joinedDashboard(payload) {
+    const { location, user } = payload;
+    const userData = Users.get(user);
+    userData.location = location;
+    Users.set(user, userData);
+    // update global dashboard to reflect players location
+    ioRef.emit('connected-user', Users.size, userData, user);
   },
   handleMessage(message) {
     const { room } = message;

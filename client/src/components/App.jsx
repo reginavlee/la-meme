@@ -72,7 +72,6 @@ class App extends Component {
   }
   componentDidMount() {
     this.getUsersProfile();
-
   }
   componentWillUpdate(nextProps, nextState) {
     console.log(nextState);
@@ -85,6 +84,7 @@ class App extends Component {
     }
   }
   getUsersProfile() {
+    console.log('fired');
     this.state.auth.lock.on('authenticated', (authResult) => {
       this.state.auth.lock.getUserInfo(authResult.accessToken, (err, profile) => {
         if (err) {
@@ -119,7 +119,6 @@ class App extends Component {
               <div>
                 { this.state.authed ? <h1>Logged in as: {this.state.profile.username} </h1> : 'please login: ' }
                 <Switch>
-                  {/*<LoginPage login={this.login} />*/}
                   <Route exact path="/" component={Home} />
                   <PublicRoute login={this.login} authService={this.state.auth} authed={this.state.authed} path="/login" component={LoginPage} />
                   <PrivateRoute socket={socket} logout={this.logout} userProfile={this.state.profile} authService={this.state.auth} authed={this.state.authed} path="/dashboard" component={Dashboard} />
