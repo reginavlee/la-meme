@@ -21,12 +21,13 @@ module.exports = {
       socket.on('start-round', this.startRound);
       // redis related
       socket.on('joined-dashboard', (username) => { redisController.incrementClientCount(socket, ioRef, username); });
-      socket.on('disconnect', (username) => { redisController.decrementClientCount(socket, ioRef, username); });
+      socket.on('disconnect', this.handleDisconnect);
       socket.on('left-dashboard', () => { console.log('left') });
     });
   },
   createUser(user) {
     const { username } = user;
+    this.username = username
     redisController.addUser(user, this.id);
     if (Users.get(username)) {
       const userData = Users.get(username);
@@ -39,6 +40,7 @@ module.exports = {
       Users.set(username, userData);
     }
     const userData = Users.get(username);
+    console.log(Users);
     ioRef.emit('connected-user', Users.size, userData, username);
     ioRef.emit('new-user', Users.size);
   },
@@ -65,6 +67,11 @@ module.exports = {
       // send back new room occupancy to all clients in that particular room
       self.emitRoomOccupancy(room, this);
     });
+  },
+  handleDisconnect() {
+    console.log(this.username);
+    // delete user from Rooms on disconnect
+    Rooms.delete(this.username);
   },
   removeUser(userObj) {
     const { room, connectionType, username } = userObj;

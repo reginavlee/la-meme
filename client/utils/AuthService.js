@@ -65,5 +65,6 @@ export default class AuthService {
     // Clear user token and profile data from local storage
     localStorage.removeItem('id_token');
     localStorage.removeItem('accessToken');
+    localStorage.removeItem('profile');
   }
 }

@@ -61,7 +61,7 @@ class App extends Component {
     // if it exists, setState, if not hit auth0 api for profile
     // solves refresh issue~
     const profile = JSON.parse(localStorage.getItem('profile'));
-    if (profile.username) {
+    if (profile) {
       this.setState({
         authed: true,
         profile
@@ -71,7 +71,7 @@ class App extends Component {
     }
   }
   componentDidMount() {
-    console.log(this.state);
+    this.getUsersProfile();
 
   }
   componentWillUpdate(nextProps, nextState) {
