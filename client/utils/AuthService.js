@@ -18,9 +18,6 @@ export default class AuthService {
   }
 
   _doAuthentication(authResult) {
-    const config = {
-      'Application-type': 'application/json'
-    };
     this.lock.getUserInfo(authResult.accessToken, (err, profile) => {
       if (err) {
         console.log(err);
@@ -33,25 +30,12 @@ export default class AuthService {
         this.lock.hide();
       }, 1500);
     });
-    axios.post('http://localhost:3000/users', {
-      token: authResult
-    }, config);
-    // navigate to the home route
   }
   login() {
     // Call the show method to display the widget.
     this.lock.show();
   }
   getProfile(cb) {
-    console.log(cb);
-    const token = this.getAccessToken();
-    console.log(token);
-    this.lock.getUserInfo(token, (err, profile) => {
-      if (err) {
-        console.log(err);
-      }
-      // cb(profile);
-    });
   }
   loggedIn() {
     // Checks if there is a saved token and it's still valid
@@ -66,7 +50,7 @@ export default class AuthService {
     localStorage.setItem('accessToken', accessToken);
   }
   setProfile(profile) {
-    localStorage.setItem('profile', profile);
+    localStorage.setItem('profile', JSON.stringify(profile));
   }
   getToken() {
     // Retrieves the user token from local storage
@@ -81,5 +65,6 @@ export default class AuthService {
     // Clear user token and profile data from local storage
     localStorage.removeItem('id_token');
     localStorage.removeItem('accessToken');
+    localStorage.removeItem('profile');
   }
 }
