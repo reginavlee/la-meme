@@ -30,28 +30,17 @@ class GameInput extends Component {
   }
   render() {
     return (
-      <Form onSubmit={this.handleSubmit}>
-        <FormGroup bsSize="large">
+      <Form>
+        <FormGroup bsSize="large" className="inputArea">
           <InputGroup>
-            <FormControl
+            <FormControl 
+              componentClass="textarea"
               onChange={this.handleInputChange}
               value={this.state.value}
               type="text"
+              rows="2"
               placeholder="..."
             />
-            <OverlayTrigger placement="right" overlay={tooltip}>
-              <DropdownButton
-                bsStyle="primary"
-                bsSize="large"
-                componentClass={InputGroup.Button}
-                id="meme-input-dropdown"
-                title="Actions"
-              >
-                <MenuItem key="3">Clear</MenuItem>
-                <MenuItem key="1">Save</MenuItem>
-                <MenuItem key="2">Quit</MenuItem>
-              </DropdownButton>
-            </OverlayTrigger>
           </InputGroup>
         </FormGroup>
       </Form>
