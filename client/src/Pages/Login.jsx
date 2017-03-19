@@ -1,5 +1,5 @@
 import React, { PropTypes as T } from 'react';
-import { Button } from 'react-bootstrap';
+import { Button, Jumbotron } from 'react-bootstrap';
 
 export class Login extends React.Component {
   constructor(props) {
