@@ -5,10 +5,15 @@ const Sequelize = require('sequelize');
 // insert your url below based on how your connecting to postgres //
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 const db = new Sequelize('postgres://avehvksm:BsxxRvnB0sMhTN48xMclrogYVhcmLlxY@stampy.db.elephantsql.com:5432/avehvksm');
 =======
 // const db = new Sequelize('postgres://avehvksm:BsxxRvnB0sMhTN48xMclrogYVhcmLlxY@stampy.db.elephantsql.com:5432/avehvksm');
 >>>>>>> tweaks
+=======
+//const db = new Sequelize('postgres://avehvksm:BsxxRvnB0sMhTN48xMclrogYVhcmLlxY@stampy.db.elephantsql.com:5432/avehvksm');
+
+>>>>>>> Login and homepage work
 
 // const db = new Sequelize('lameme', 'Jahosh', '', {
 //   host: 'localhost',
