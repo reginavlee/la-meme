@@ -16,7 +16,6 @@ class Game extends Component {
       memePhoto: []
     };
     this.emitMessage = this.emitMessage.bind(this);
-    this.MemePhoto = this.MemePhoto.bind(this)
   }
   componentWillMount() {
     const payload = {
@@ -28,8 +27,7 @@ class Game extends Component {
     this.socket = io('http://localhost:3000');
     this.renderMessage();
     this.RoomOccupancy();
-    this.MemePhoto();
-    console.log("THIS", this);
+    this.getMemePhoto();
     window.onbeforeunload = () => {
       // this.removeUser();
     };
@@ -179,8 +177,7 @@ class Game extends Component {
     });
     this.socket.on('intermission-over', () => {
       self.hideMeme();
-      self.MemePhoto();
-{/**      this.getMemePhoto(); **/}
+      this.getMemePhoto();
       self.showMemePhoto();
       self.setState({
         intermission: false
@@ -202,16 +199,6 @@ class Game extends Component {
         spectatorCount
       });
     });
-  }
-
-  MemePhoto() {
-    const self = this;
-    this.socket.on('photoUrl', (photoUrl) => {
-    console.log("URL*****", photoUrl);
-      self.setState({
-        memePhoto: photoUrl
-      })
-    })
   }
   /**
    * handles sending message through socket.io ( not used as of now, maybe chat later? )
