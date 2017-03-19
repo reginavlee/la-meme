@@ -98,6 +98,10 @@ class DashboardContainer extends Component {
    * Responsible for setting up user invites
    */
   setupUserInvite(socketId) {
+    if (socketId === this.props.socket.id) {
+      swal('ERROR: Can\'t invite yourself', 'Feeling lonely huh?', 'error');
+      return;
+    }
     swal({
       title: 'Room config',
       text: 'please enter a room-name',

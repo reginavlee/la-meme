@@ -26,7 +26,10 @@ class PlayerTable extends Component {
         getTdProps={(state, rowInfo, column, instance) => {
           return {
             onClick: e => {
-              this.props.setupUserInvite(e.target.innerHTML);
+              if (column.header === "Socketid") {
+                this.props.setupUserInvite(e.target.innerHTML);
+                console.log(column);
+              }
             }
           }
         }}
