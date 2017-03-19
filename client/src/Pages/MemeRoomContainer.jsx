@@ -4,7 +4,6 @@ import genRandomTokenString from '../../utils/genRandomString';
 import MemeRoom from '../components/MemeRoom';
 import axios from 'axios';
 
-
 class Game extends Component {
   constructor(props) {
     super(props);
@@ -21,19 +20,7 @@ class Game extends Component {
       memePhoto: []
     };
     this.emitMessage = this.emitMessage.bind(this);
-  }
-
-  getMemePhoto() {
-    var that = this;
-    axios.get("http://localhost:3000/api/memes")
-      .then((results) => {
-        that.setState({
-          memePhoto: results.data
-        });
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    this.MemePhoto = this.MemePhoto.bind(this)
   }
 
   componentWillMount() {
@@ -41,7 +28,8 @@ class Game extends Component {
     this.createRoom();
     this.renderMessage();
     this.RoomOccupancy();
-    this.getMemePhoto();
+    this.MemePhoto();
+    console.log("THIS", this);
     window.onbeforeunload = () => {
       // this.removeUser();
     };
@@ -182,7 +170,8 @@ class Game extends Component {
     });
     this.socket.on('intermission-over', () => {
       self.hideMeme();
-      this.getMemePhoto();
+      self.MemePhoto();
+{/**      this.getMemePhoto(); **/}
       self.showMemePhoto();
       self.setState({
         intermission: false
@@ -204,6 +193,16 @@ class Game extends Component {
         spectatorCount
       });
     });
+  }
+
+  MemePhoto() {
+    const self = this;
+    this.socket.on('photoUrl', (photoUrl) => {
+    console.log("URL*****", photoUrl);
+      self.setState({
+        memePhoto: photoUrl
+      })
+    })
   }
   /**
    * handles sending message through socket.io ( not used as of now, maybe chat later? )
