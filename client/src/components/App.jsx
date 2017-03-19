@@ -115,10 +115,10 @@ class App extends Component {
           <Row>
             <Col xs={12} md={8} mdOffset={1}>
               <div>
-                { this.state.authed ? <h1>Logged in as: {this.state.profile.username} </h1> : 'please login: ' }
+                { this.state.authed ? <p>Logged in as {this.state.profile.username} </p> : '' }
                 <Switch>
                   <Route exact path="/" component={Home} />
-                  <PublicRoute login={this.login} authService={this.state.auth} authed={this.state.authed} path="/login" component={LoginPage} />
+                  <PublicRoute login={this.login} authService={this.state.auth} authed={this.state.authed} path="/login" path="/" component={LoginPage} />
                   <PrivateRoute socket={socket} logout={this.logout} userProfile={this.state.profile} authService={this.state.auth} authed={this.state.authed} path="/dashboard" component={Dashboard} />
                   <PrivateRoute socket={socket} authed={this.state.authed} userProfile={this.state.profile} path="/play" component={MemeRoomContainer} />
                   <Route render={() => <h1> Page not found </h1>} />

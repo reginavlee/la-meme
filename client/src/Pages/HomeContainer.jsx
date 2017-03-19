@@ -15,8 +15,8 @@ class Home extends Component {
     return (
       <div>
         <h1>la même</h1>
-        <Link to="/login">Login </Link>
         <Link to="/dashboard">Dashboard</Link>
+        <Link to="/login"> Login</Link>
       </div> 
     );
   }
