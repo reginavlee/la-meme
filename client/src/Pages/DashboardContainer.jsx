@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import { Grid, Row, Col, Button } from 'react-bootstrap';
-import io from 'socket.io-client';
-import genRandomTokenString from '../../utils/genRandomString';
+import { default as swal } from 'sweetalert2';
 
 import AlertsContainer from '../components/alerts/AlertsContainer';
 import Dashboard from '../components/Dashboard';
@@ -9,12 +9,15 @@ import Dashboard from '../components/Dashboard';
 class DashboardContainer extends Component {
   constructor(props) {
     super(props);
-    const token = genRandomTokenString();
     this.state = {
       users: new Map(),
+      rooms: new Map(),
       onlineCount: 0,
       newUser: false
     };
+    this.setupUserInvite = this.setupUserInvite.bind(this);
+    this.joinRoom = this.joinRoom.bind(this);
+    this.userCreatedRoom = this.userCreatedRoom.bind(this);
   }
   /**
    * Init user creation on the server
@@ -37,7 +40,28 @@ class DashboardContainer extends Component {
         onlineCount: count
       });
     });
+    this.props.socket.on('new-room', ({ roomname, roomData }) => {
+      const currentRooms = this.state.rooms;
+      currentRooms.set(roomname, roomData.playerCount + roomData.spectatorCount);
+      this.setState({
+        rooms: currentRooms
+      });
+    });
+    this.props.socket.on('deleted-room', (roomToDelete) => {
+      const currentRooms = this.state.rooms;
+      currentRooms.delete(roomToDelete);
+      this.setState({
+        rooms: currentRooms
+      });
+    });
     this.listenForGlobalCount();
+    this.listenForInvites();
+    this.props.socket.on('join-memeroom', (data) => {
+      this.setState({
+        redirect: true
+      });
+      console.log(data);
+    });
   }
   componentWillReceiveProps(nextProps) {
     this.listenForGlobalCount();
@@ -46,11 +70,78 @@ class DashboardContainer extends Component {
     this.handleRoomData();
   }
   componentDidUpdate(prevProps, prevState) {
-    console.log(this.state);
   }
   componentWillUnmount() {
     this.emitLeftDashboard();
     window.onbeforeunload = null;
+  }
+  userCreatedRoom() {
+    swal({
+      title: 'setup room',
+      text: 'please enter a room-name',
+      input: 'text',
+      confirmButtonText: 'create-room',
+      showCancelButton: true
+    })
+      .then((roomname) => {
+        this.props.socket.emit('create-room', { roomname });
+      })
+      .catch((swal.noop));
+  }
+  /**
+   * Responsible for allowing a user to join a already created room listed on room-list
+   */
+  joinRoom(roomname) {
+    this.props.socket.emit('join-room', roomname);
+  }
+  /**
+   * Responsible for setting up user invites
+   */
+  setupUserInvite(socketId) {
+    if (socketId === this.props.socket.id) {
+      swal('ERROR: Can\'t invite yourself', 'Feeling lonely huh?', 'error');
+      return;
+    }
+    swal({
+      title: 'Room config',
+      text: 'please enter a room-name',
+      input: 'text',
+      confirmButtonText: 'send invite',
+      showCancelButton: true
+    })
+    .then((roomname) => {
+      console.log(roomname);
+      console.log('send invite to this socket', socketId);
+      const payload = {
+        sender: this.state.user,
+        reciever: socketId,
+        roomname
+      };
+      this.props.socket.emit('user:invite', payload);
+    });
+  }
+  listenForInvites() {
+    this.props.socket.on('invite', (sender, cb) => {
+      swal({
+        title: 'Invitation',
+        text: `user: ${sender} wants to play a game, accept?`,
+        type: 'question',
+        confirmButtonText: 'Accept',
+        showCloseButton: true
+      }).then(() => {
+        // user accepted, lets setup the room on the server ~
+        cb(this.props.socket.id, true);
+      }, (dismiss) => {
+        if (dismiss === 'close' || dismiss === 'overlay') {
+          swal('Invitation cancelled', "don't be a flake", 'error');
+        }
+      })
+      .catch((err) => {
+        if (err) {
+          console.log(err);
+        }
+      });
+    });
   }
   /**
    * {Global-Event} A new user has joined the socket.io server, notify user 
@@ -78,10 +169,19 @@ class DashboardContainer extends Component {
     this.props.socket.emit('create-user', payload);
   }
   emitJoinedDashboard(username) {
-    this.props.socket.emit('joined-dashboard', username);
+    console.log('joined dashboard!');
+    const payload = {
+      user: username,
+      location: 'dashboard'
+    };
+    this.props.socket.emit('location:dashboard', payload);
   }
   emitLeftDashboard(username) {
-    this.props.socket.emit('left-dashboard');
+    const payload = {
+      user: username,
+      location: ''
+    };
+    this.props.socket.emit('left-dashboard', payload);
   }
   listenForGlobalCount() {
     const self = this;
@@ -97,11 +197,11 @@ class DashboardContainer extends Component {
     });
   }
   listenForRoomData() {
-    this.props.socket.on('rooms-data', (data) => {
-      this.setState({
-        data
-      });
-    });
+    // this.props.socket.on('rooms-data', (data) => {
+    //   this.setState({
+    //     data
+    //   });
+    // });
   }
   handleRoomData() {
   }
@@ -114,20 +214,32 @@ class DashboardContainer extends Component {
             this.props.logout();
             console.log('fired');
             }}>Logout</Button> 
+            <Button 
+              bsStyle="primary"
+              onClick={this.userCreatedRoom}
+            >
+            Create Room
+            </Button>
           <Col md={12}>
             <Dashboard
               onlineCount={this.state.onlineCount}
               playerTableData={this.state.users}
+              setupUserInvite={this.setupUserInvite}
+              joinRoom={this.joinRoom}
               profile={this.props.profile}
+              roomTableData={this.state.rooms}
             />
+            {this.state.redirect ?
+              <Redirect to="/play" />
+              : ''}
           </Col>
         </Row>
         <hr />
         <Row>
           <Col md={12}>
-            <AlertsContainer
+            {/* <AlertsContainer
               newUser={this.state.newUser}
-            />
+            />*/}
           </Col>
         </Row>
       </Grid>

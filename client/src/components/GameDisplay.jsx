@@ -8,6 +8,7 @@ class GameDisplay extends Component {
     this.state = {
       gameInput: ''
     };
+
   }
     setGameInput(text) {
     this.setState({gameInput: text})

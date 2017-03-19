@@ -9,7 +9,8 @@ class GameInput extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: ''
+      value: '',
+      memeText: ''
     };
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -24,6 +25,7 @@ class GameInput extends Component {
     e.preventDefault();
     const message = this.state.value;
     this.setState({
+      memeText: message,
       value: ''
     });
     this.props.setGameInput(message)
@@ -38,6 +40,7 @@ class GameInput extends Component {
               componentClass="textarea"
               onChange={this.handleInputChange}
               value={this.state.value}
+              memeText={this.state.memeText}
               type="text"
               rows="2"
               placeholder="Enter your caption"
