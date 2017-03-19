@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { PageHeader } from 'react-bootstrap';
+import AuthService from '../../utils/AuthService';
+import { Jumbotron, Button, ButtonGroup, PageHeader } from 'react-bootstrap';
 
 class Home extends Component {
   constructor(props) {
@@ -19,7 +20,7 @@ class Home extends Component {
     return (
       <div>
         <div className="text-center">
-          <PageHeader>la même</PageHeader>
+          <img src="http://i.imgur.com/79ctaQX.png" alt="la même"/>
         </div>
         <div className="text-center">
           <div className="wrapper-showcase text-center">
@@ -30,11 +31,12 @@ class Home extends Component {
           </div>
         </div>
         <hr />
-        <Link to="/login">Login </Link>
-        <Link to="/dashboard">Dashboard</Link>
+        <a href="/login"><Button bsStyle="primary">Login</Button></a>
       </div>
     );
   }
 }
 
 export default Home;
+
+//<a href="/dashboard"><Button bsStyle="primary">Dashboard</Button></a>
