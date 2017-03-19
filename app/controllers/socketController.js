@@ -1,6 +1,5 @@
 const Users = new Map();
 const Rooms = new Map();
-const redisController = require('./redisController');
 
 let ioRef;
 let self;
@@ -11,23 +10,18 @@ module.exports = {
       ioRef = io;
       // creates a user within our map
       socket.on('create-user', this.createUser);
-      // creates a room within our redis store
+      // creates a room within our Rooms Map
       socket.on('create-room', this.createRoom);
       socket.on('location:memeroom', this.joinedMemeRoom);
       socket.on('location:dashboard', this.joinedDashboard);
       socket.on('left-meme-room', this.removeUser);
-
-      socket.on('test', (data) => {
-        console.log(data);
-      });
-
+      socket.on('join-room', this.joinRoom);
 
       // USER INVITE SYSTEM
       socket.on('user:invite', this.handleUserInvite);
       // socket.on('left-dashboard', this.leftDashboard);
       socket.on('chat-message', this.handleMessage);
       socket.on('start-round', this.startRound);
-      // redis related
       socket.on('disconnect', this.handleDisconnect);
     });
   },
@@ -82,7 +76,6 @@ module.exports = {
     const userData = Users.get(username);
     ioRef.emit('connected-user', Users.size, userData, username);
     ioRef.emit('new-user', Users.size);
-    // redisController.addUser(user, this.id);
   },
   createRoom({ roomname, sockets }) {
     if (!sockets) {
@@ -111,10 +104,33 @@ module.exports = {
       });
     });
   },
+  joinRoom(roomname) {
+    console.log('this is roomname', roomname);
+    this.join(roomname, (err) => {
+      if (err) {
+        console.log(err);
+      }
+      // add the room to our map of stored rooms (eventually will be a database);
+      // self.addRoomToMap(roomname, this);
+      // grab room so we can determine whether user is a player or spectator
+      const roomData = Rooms.get(roomname);
+      console.log(roomData, 'this is roomData');
+      if (roomData.playerCount < 2) {
+        // if room size < 2, add player as a player to our Map
+        self.addPlayer(roomname, this);
+      } else {
+        // add player as a spectator to our Map
+        self.addSpectator(roomname, this);
+      }
+      // emit successfully join
+      self.emitSuccessfulJoin(roomname, this);
+      // send back new room occupancy to all clients in that particular room
+      self.emitRoomOccupancy(roomname, this);
+    });
+  },
   handleDisconnect() {
-    console.log(this.username);
     // delete user from Rooms on disconnect
-    Rooms.delete(this.username);
+    Users.delete(this.username);
   },
   removeUser(userObj) {
     const { room, connectionType, username } = userObj;
@@ -136,10 +152,14 @@ module.exports = {
         Rooms.delete(room);
       }
       const roomData = Rooms.get(room);
-      if (roomData.playerCount === 0) {
-        console.log(`room: ${room} empty, deleteing...`);
-        ioRef.emit('deleted-room', room);
-        Rooms.delete(room);
+      try {
+        if (roomData.playerCount === 0) {
+          console.log(`room: ${room} empty, deleteing...`);
+          ioRef.emit('deleted-room', room);
+          Rooms.delete(room);
+        }
+      } catch(err) {
+        console.log(err);
       }
     });
   },
@@ -153,10 +173,10 @@ module.exports = {
       roomData.spectatorCount = 0;
       roomData.active = false;
       Rooms.set(room, roomData);
+      return;
     }
-      // redisController.addRoom(room, roomData, socket);
     // if room already exists, user can be added to it
-    console.log(Rooms);
+    console.log('Room already exists, lets add this player to room');
   },
   emitSuccessfulJoin(room, socket) {
     // send back to client event to move both players to memeRoom;
@@ -212,12 +232,6 @@ module.exports = {
       roomData: roomToEmit
     };
     ioRef.emit('new-room', roomPayload);
-    // update redis
-    // const totalCount = roomData.playerCount + roomData.spectatorCount;
-    // if (totalCount > 0) {
-    //   // use ioRef in the future to only emit to players in dashboard/lobby area
-    //   redisController.updateRoomCount(room, totalCount, socket);
-    // }
   },
   joinedMemeRoom(payload) {
     const { location, user } = payload;
