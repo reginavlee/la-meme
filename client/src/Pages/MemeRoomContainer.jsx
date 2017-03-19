@@ -24,12 +24,10 @@ class Game extends Component {
     };
     this.props.socket.emit('location:memeroom', payload);
     this.setRoom();
-    this.socket = io('http://localhost:3000');
-    this.renderMessage();
     this.RoomOccupancy();
     this.getMemePhoto();
     window.onbeforeunload = () => {
-      // this.removeUser();
+      this.removeUser();
     };
   }
   componentDidMount() {
@@ -47,7 +45,7 @@ class Game extends Component {
    * removes a user from the users storage on unmounting
    */
   componentWillUnmount() {
-    // this.removeUser();
+    this.removeUser();
     window.onbeforeunload = null;
   }
   getMemePhoto() {
@@ -78,16 +76,14 @@ class Game extends Component {
   */
   removeUser() {
     const room = this.state.currentRoom;
-    const user = this.state.username;
+    const username = this.props.profile.username;
     const connectionType = this.state.connectionType;
-    const authToken = this.state.authToken;
     const payload = {
       room,
       connectionType,
-      user,
-      authToken
+      username,
     };
-    this.socket.emit('forceDisconnect', payload);
+    this.props.socket.emit('left-meme-room', payload);
   }
   /**
    * triggers the server to start the countdown
@@ -113,7 +109,7 @@ class Game extends Component {
    */
   listenforCountdown() {
     const self = this;
-    this.socket.on('count-down', ({ time, countingDown }) => {
+    this.props.socket.on('count-down', ({ time, countingDown }) => {
       self.setState({
         timer: time,
         countingDown
@@ -125,7 +121,7 @@ class Game extends Component {
    */
   roundOver() {
     const self = this;
-    this.socket.on('round-over', (round) => {
+    this.props.socket.on('round-over', (round) => {
       console.log(`round ${round} is over!`);
       const count = round + 1;
       this.hideMemePhoto();
@@ -170,12 +166,12 @@ class Game extends Component {
    */
   listenForIntermission() {
     const self = this;
-    this.socket.on('intermission', () => {
+    this.props.socket.on('intermission', () => {
       self.setState({
         intermission: true
       });
     });
-    this.socket.on('intermission-over', () => {
+    this.props.socket.on('intermission-over', () => {
       self.hideMeme();
       this.getMemePhoto();
       self.showMemePhoto();
@@ -183,7 +179,7 @@ class Game extends Component {
         intermission: false
       });
     });
-    this.socket.on('game-over', () => {
+    this.props.socket.on('game-over', () => {
       self.setState({
         gameOver: true
       });
@@ -193,7 +189,7 @@ class Game extends Component {
    * listens for room occupancy changes from the server
    */
   RoomOccupancy() {
-    this.socket.on('occupancy', ({ playerCount, spectatorCount }) => {
+    this.props.socket.on('occupancy', ({ playerCount, spectatorCount }) => {
       this.setState({
         playerCount,
         spectatorCount
@@ -217,7 +213,7 @@ class Game extends Component {
    * handles rendering message to all clients ( not used as of now, maybe chat later? )
    */
   renderMessage() {
-    this.socket.on('new-message', (data) => {
+    this.props.socket.on('new-message', (data) => {
       console.log('from renderMessage', data);
       document.getElementById('messages').innerHTML += `<li>${data.message}</li>`;
     });
