@@ -11,16 +11,24 @@ class RoomsTable extends Component {
     };
   }
   render() {
+    const dataHolder = [];
+    for (const [roomname, roomcount] of this.props.data) {
+      dataHolder.push({ roomname, roomcount });
+    }
+    const data = dataHolder;
     return (
       <ReactTable
         classsName="-striped"
         style={style}
         columns={columns}
         defaultPageSize={10}
+        data={data}
         getTdProps={(state, rowInfo, column, instance) => {
           return {
             onClick: e => {
-            
+              if (column.header === 'Roomname') {
+                this.props.joinRoom(e.target.innerHTML);
+              }
             }
           };
         }}

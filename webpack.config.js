@@ -37,6 +37,12 @@ const config = {
         use: ['style-loader', 'css-loader']
       },
       {
+        test: /\.png$/,
+        use: {
+          loader: 'url-loader',
+          options: { limit: 10000 } }
+      },
+      {
         loader: 'babel-loader',
         exclude: /node_modules/,
         test: SRC_DIR,

@@ -11,10 +11,13 @@ class DashboardContainer extends Component {
     super(props);
     this.state = {
       users: new Map(),
+      rooms: new Map(),
       onlineCount: 0,
       newUser: false
     };
     this.setupUserInvite = this.setupUserInvite.bind(this);
+    this.joinRoom = this.joinRoom.bind(this);
+    this.userCreatedRoom = this.userCreatedRoom.bind(this);
   }
   /**
    * Init user creation on the server
@@ -35,6 +38,20 @@ class DashboardContainer extends Component {
     this.props.socket.on('new-user', (count) => {
       this.setState({
         onlineCount: count
+      });
+    });
+    this.props.socket.on('new-room', ({ roomname, roomData }) => {
+      const currentRooms = this.state.rooms;
+      currentRooms.set(roomname, roomData.playerCount + roomData.spectatorCount);
+      this.setState({
+        rooms: currentRooms
+      });
+    });
+    this.props.socket.on('deleted-room', (roomToDelete) => {
+      const currentRooms = this.state.rooms;
+      currentRooms.delete(roomToDelete);
+      this.setState({
+        rooms: currentRooms
       });
     });
     this.listenForGlobalCount();
@@ -58,10 +75,33 @@ class DashboardContainer extends Component {
     this.emitLeftDashboard();
     window.onbeforeunload = null;
   }
+  userCreatedRoom() {
+    swal({
+      title: 'setup room',
+      text: 'please enter a room-name',
+      input: 'text',
+      confirmButtonText: 'create-room',
+      showCancelButton: true
+    })
+      .then((roomname) => {
+        this.props.socket.emit('create-room', { roomname });
+      })
+      .catch((swal.noop));
+  }
+  /**
+   * Responsible for allowing a user to join a already created room listed on room-list
+   */
+  joinRoom(roomname) {
+    this.props.socket.emit('join-room', roomname);
+  }
   /**
    * Responsible for setting up user invites
    */
   setupUserInvite(socketId) {
+    if (socketId === this.props.socket.id) {
+      swal('ERROR: Can\'t invite yourself', 'Feeling lonely huh?', 'error');
+      return;
+    }
     swal({
       title: 'Room config',
       text: 'please enter a room-name',
@@ -174,12 +214,20 @@ class DashboardContainer extends Component {
             this.props.logout();
             console.log('fired');
             }}>Logout</Button> 
+            <Button 
+              bsStyle="primary"
+              onClick={this.userCreatedRoom}
+            >
+            Create Room
+            </Button>
           <Col md={12}>
             <Dashboard
               onlineCount={this.state.onlineCount}
               playerTableData={this.state.users}
               setupUserInvite={this.setupUserInvite}
+              joinRoom={this.joinRoom}
               profile={this.props.profile}
+              roomTableData={this.state.rooms}
             />
             {this.state.redirect ?
               <Redirect to="/play" />
@@ -189,9 +237,9 @@ class DashboardContainer extends Component {
         <hr />
         <Row>
           <Col md={12}>
-            <AlertsContainer
+            {/* <AlertsContainer
               newUser={this.state.newUser}
-            />
+            />*/}
           </Col>
         </Row>
       </Grid>
