@@ -127,7 +127,6 @@ class App extends Component {
           <Row>
             <Col xs={12} md={8} mdOffset={1}>
               <div>
-                { this.state.authed ? <p>Logged in as {this.state.profile.username} </p> : '' }
                 <Switch>
                   <Route exact path="/" component={Home} />
                   <PublicRoute login={this.login} authService={this.state.auth} authed={this.state.authed} path="/login" component={LoginPage} onEnter={alreadyLoggedIn} />

@@ -16,6 +16,7 @@ class DashboardContainer extends Component {
       newUser: false
     };
     this.setupUserInvite = this.setupUserInvite.bind(this);
+    this.joinRoom = this.joinRoom.bind(this);
     this.userCreatedRoom = this.userCreatedRoom.bind(this);
   }
   /**
@@ -86,6 +87,12 @@ class DashboardContainer extends Component {
         this.props.socket.emit('create-room', { roomname });
       })
       .catch((swal.noop));
+  }
+  /**
+   * Responsible for allowing a user to join a already created room listed on room-list
+   */
+  joinRoom(roomname) {
+    this.props.socket.emit('join-room', roomname);
   }
   /**
    * Responsible for setting up user invites
@@ -214,6 +221,7 @@ class DashboardContainer extends Component {
               onlineCount={this.state.onlineCount}
               playerTableData={this.state.users}
               setupUserInvite={this.setupUserInvite}
+              joinRoom={this.joinRoom}
               profile={this.props.profile}
               roomTableData={this.state.rooms}
             />
@@ -225,9 +233,9 @@ class DashboardContainer extends Component {
         <hr />
         <Row>
           <Col md={12}>
-            <AlertsContainer
+            {/* <AlertsContainer
               newUser={this.state.newUser}
-            />
+            />*/}
           </Col>
         </Row>
       </Grid>
