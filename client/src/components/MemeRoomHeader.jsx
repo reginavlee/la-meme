@@ -14,9 +14,8 @@ const MemeRoomHeader = (props) => {
     <div id="grad">
       <Row className="game-board-header-content">
         <Col xs={4} md={4}>
-        {/**
           <h3> <Label bsStyle="default" bsSize="large">{props.currentRoom}</Label></h3>
-          **/}
+
           <br />
           <h3> players: <Label bsStyle="primary">{props.roomOccupancy}</Label> </h3>
         </Col>
