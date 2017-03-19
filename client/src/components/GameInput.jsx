@@ -28,6 +28,7 @@ class GameInput extends Component {
       memeText: message,
       value: ''
     });
+    this.props.setGameInput(message)
   }
   render() {
     return (
@@ -50,8 +51,6 @@ class GameInput extends Component {
           </ButtonToolbar>
         </FormGroup>
       </Form>
-     {this.state.value} ---
-      {this.state.memeText} ***
       </div>
     );
   }

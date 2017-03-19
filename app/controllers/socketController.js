@@ -1,8 +1,24 @@
 const Users = new Map();
 const Rooms = new Map();
+const redisController = require('./redisController');
+const axios = require('axios');
+const router = require('../../routes');
 
 let ioRef;
 let self;
+
+function getMemePhoto(room, io) {
+  axios.get('http://localhost:3000/api/memes')
+  .then((results) => {
+    const photoUrl = results.data;
+    console.log('URL**', photoUrl);
+    io.in(room).emit('photoUrl', photoUrl);
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+}
+
 module.exports = {
   init(io) {
     self = this;
@@ -258,6 +274,7 @@ module.exports = {
   handleRoundStart(room) {
     let times = 0;
     const roomData = Rooms.get(room);
+    getMemePhoto(room, ioRef);
     roomData.playing = false;
     if (roomData.size < 2) {
       // emit something here to client telling them not enough users
@@ -282,6 +299,7 @@ module.exports = {
               round += 1;
               // start round 2
               ioRef.to(room).emit('intermission-over');
+              getMemePhoto(room, ioRef);
               time = 10;
               console.log('round 1 intermission done, round 2 start');
               return;
