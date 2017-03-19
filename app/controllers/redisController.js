@@ -3,7 +3,6 @@
 // const subClient = require('../redis/redisConnect').createClient();
 // const roomPubClient = require('../redis/redisConnect').createClient();
 // const roomSubClient = require('../redis/redisConnect').createClient();
-// const once = require('lodash').once;
 // // init global count to 0
 // pubClient.setAsync('gc', 0).then((v) => { console.log('global count initialized, ', v); });
 // subClient.subscribe('global-count');
