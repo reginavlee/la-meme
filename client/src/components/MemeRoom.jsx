@@ -20,7 +20,6 @@ const MemeRoom = (props) => {
             handleMessage={props.handleMessage}
             connectionType={props.connectionType}
             memePhoto={props.memePhoto}
-            
           />
         </Col>
       </Row>
