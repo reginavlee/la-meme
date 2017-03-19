@@ -1,5 +1,5 @@
 import React, { PropTypes as T } from 'react';
-import { Button } from 'react-bootstrap';
+import { Button, Jumbotron } from 'react-bootstrap';
 
 export class Login extends React.Component {
   constructor(props) {
@@ -10,17 +10,21 @@ export class Login extends React.Component {
   }
   componentDidMount() {
     console.log(localStorage.getItem('id_token'));
+    this.props.auth.login();
   }
   render() {
     return (
       <div>
-        <h2>Login</h2>
+      <Jumbotron>
+        <img src="http://i.imgur.com/79ctaQX.png" alt="la même"/>
+        <p>Sign up or log in to continue</p>
         <Button
           bsStyle="primary"
           onClick={this.props.auth.login}
         >
           Login
         </Button>
+      </Jumbotron>
       </div>
     );
   }
