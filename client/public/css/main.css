@@ -71,7 +71,40 @@
   font-size: 30px;
 }
 
-.profilePhoto {
-  margin-bottom: 20px;
+.profile-photo {
+  height: 125px;
 }
 
+
+
+.element {
+
+  z-index: 10;
+  font-size: 24px;
+  color: white;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+  font-family: Impact, "Arial Black", "sans serif";
+  /*background-image:url('https://files.slack.com/files-pri/T2SV1LBC6-F4G53DWKF/screen_shot_2017-03-09_at_7.53.33_am.png') no-repeat;*/
+}
+
+.home-meme {
+  position: relative;
+}
+
+.wrapper-showcase {
+
+}
+.wrapper-showcase div.first img {
+  /*width: 200px;
+  height: 200px;*/
+  z-index: -100;
+}
+.wrapper-showcase div.home-meme span {
+    width: 100%;
+    height: 100%;
+    display: inline-block;
+    left: 0;
+    z-index: 100;
+    top:0;
+    background: black;
+}

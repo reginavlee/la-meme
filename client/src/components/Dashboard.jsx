@@ -13,7 +13,7 @@ const Dashboard = (props) => {
     <div>
       <Row>
         <div className="text-center">
-          <Image className="text-center profile-photo" alt='profile_img' src={userProfile.picture} circle />
+          <Image className="text-center profile-photo" alt='profile_img' src={userProfile.picture} circle thumbnail />
           {userProfile ? <h3>{userProfile.username} </h3> : ''}
           <hr />
         </div>

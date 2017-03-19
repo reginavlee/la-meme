@@ -19,6 +19,7 @@ module.exports = {
 
       // USER INVITE SYSTEM
       socket.on('user:invite', this.handleUserInvite);
+
       // socket.on('left-dashboard', this.leftDashboard);
       socket.on('chat-message', this.handleMessage);
       socket.on('start-round', this.startRound);
@@ -131,6 +132,7 @@ module.exports = {
   handleDisconnect() {
     // delete user from Rooms on disconnect
     Users.delete(this.username);
+    ioRef.emit('new-user', Users.size);
   },
   removeUser(userObj) {
     const { room, connectionType, username } = userObj;
