@@ -6,10 +6,13 @@ import { Jumbotron, Button, ButtonGroup } from 'react-bootstrap';
 =======
 import { PageHeader } from 'react-bootstrap';
 
+<<<<<<< HEAD
 
 
 >>>>>>> touch-up homepage, v1
 
+=======
+>>>>>>> fix broken image in home
 class Home extends Component {
   constructor(props) {
     super(props);
