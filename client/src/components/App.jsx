@@ -84,13 +84,11 @@ class App extends Component {
     }
   }
   getUsersProfile() {
-    console.log('fired');
     this.state.auth.lock.on('authenticated', (authResult) => {
       this.state.auth.lock.getUserInfo(authResult.accessToken, (err, profile) => {
         if (err) {
           console.log(err);
         }
-        console.log(profile);
         this.setState({
           authed: true,
           profile
