@@ -1,11 +1,11 @@
 const columns = [
   {
     header: 'Roomname',
-    accessor: 'username'
+    accessor: 'roomname'
   },
   {
     header: 'Participants',
-    accessor: 'location',
+    accessor: 'roomcount',
   },
 ];
 

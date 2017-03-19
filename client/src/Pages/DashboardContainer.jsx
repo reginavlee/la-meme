@@ -11,10 +11,12 @@ class DashboardContainer extends Component {
     super(props);
     this.state = {
       users: new Map(),
+      rooms: new Map(),
       onlineCount: 0,
       newUser: false
     };
     this.setupUserInvite = this.setupUserInvite.bind(this);
+    this.userCreatedRoom = this.userCreatedRoom.bind(this);
   }
   /**
    * Init user creation on the server
@@ -37,6 +39,20 @@ class DashboardContainer extends Component {
         onlineCount: count
       });
     });
+    this.props.socket.on('new-room', ({ roomname, roomData }) => {
+      const currentRooms = this.state.rooms;
+      currentRooms.set(roomname, roomData.playerCount + roomData.spectatorCount);
+      this.setState({
+        rooms: currentRooms
+      });
+    });
+    this.props.socket.on('deleted-room', (roomToDelete) => {
+      const currentRooms = this.state.rooms;
+      currentRooms.delete(roomToDelete);
+      this.setState({
+        rooms: currentRooms
+      });
+    });
     this.listenForGlobalCount();
     this.listenForInvites();
     this.props.socket.on('join-memeroom', (data) => {
@@ -57,6 +73,19 @@ class DashboardContainer extends Component {
   componentWillUnmount() {
     this.emitLeftDashboard();
     window.onbeforeunload = null;
+  }
+  userCreatedRoom() {
+    swal({
+      title: 'setup room',
+      text: 'please enter a room-name',
+      input: 'text',
+      confirmButtonText: 'create-room',
+      showCancelButton: true
+    })
+      .then((roomname) => {
+        this.props.socket.emit('create-room', { roomname });
+      })
+      .catch((swal.noop));
   }
   /**
    * Responsible for setting up user invites
@@ -174,12 +203,19 @@ class DashboardContainer extends Component {
             this.props.logout();
             console.log('fired');
             }}>Logout</Button> 
+            <Button 
+              bsStyle="primary"
+              onClick={this.userCreatedRoom}
+            >
+            Create Room
+            </Button>
           <Col md={12}>
             <Dashboard
               onlineCount={this.state.onlineCount}
               playerTableData={this.state.users}
               setupUserInvite={this.setupUserInvite}
               profile={this.props.profile}
+              roomTableData={this.state.rooms}
             />
             {this.state.redirect ?
               <Redirect to="/play" />
