@@ -8,6 +8,7 @@ import {
 } from 'react-router-dom';
 import io from 'socket.io-client';
 
+
 /* Components */
 import Navigation from './Navigation';
 import Home from '../Pages/HomeContainer';
@@ -72,7 +73,6 @@ class App extends Component {
   }
   componentDidMount() {
     this.getUsersProfile();
-
   }
   componentWillUpdate(nextProps, nextState) {
     console.log(nextState);
@@ -90,7 +90,6 @@ class App extends Component {
         if (err) {
           console.log(err);
         }
-        console.log(profile);
         this.setState({
           authed: true,
           profile
@@ -117,9 +116,7 @@ class App extends Component {
           <Row>
             <Col xs={12} md={8} mdOffset={1}>
               <div>
-                { this.state.authed ? <h1 className="loginMsg">Logged in as: {this.state.profile.username} </h1> : 'please login: ' }
                 <Switch>
-                  {/*<LoginPage login={this.login} />*/}
                   <Route exact path="/" component={Home} />
                   <PublicRoute login={this.login} authService={this.state.auth} authed={this.state.authed} path="/login" component={LoginPage} />
                   <PrivateRoute socket={socket} logout={this.logout} userProfile={this.state.profile} authService={this.state.auth} authed={this.state.authed} path="/dashboard" component={Dashboard} />
