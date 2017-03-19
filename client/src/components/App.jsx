@@ -117,7 +117,7 @@ class App extends Component {
           <Row>
             <Col xs={12} md={8} mdOffset={1}>
               <div>
-                { this.state.authed ? <h1>Logged in as: {this.state.profile.username} </h1> : 'please login: ' }
+                { this.state.authed ? <h1 className="loginMsg">Logged in as: {this.state.profile.username} </h1> : 'please login: ' }
                 <Switch>
                   {/*<LoginPage login={this.login} />*/}
                   <Route exact path="/" component={Home} />

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, FormGroup, FormControl, InputGroup, DropdownButton, MenuItem, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Form, FormGroup, FormControl, InputGroup, DropdownButton, MenuItem, OverlayTrigger, Tooltip, ButtonToolbar, Button } from 'react-bootstrap';
 
 const tooltip = (
   <Tooltip id="tooltip">Game Commands!</Tooltip>
@@ -17,19 +17,20 @@ class GameInput extends Component {
   handleInputChange(e) {
     const value = e.target.value;
     this.setState({
-      value
+      value: value
     });
   }
   handleSubmit(e) {
     e.preventDefault();
     const message = this.state.value;
-    this.props.handleMessage(message);
     this.setState({
       value: ''
     });
+    this.props.setGameInput(message)
   }
   render() {
     return (
+    <div>
       <Form>
         <FormGroup bsSize="large" className="inputArea">
           <InputGroup>
@@ -39,11 +40,15 @@ class GameInput extends Component {
               value={this.state.value}
               type="text"
               rows="2"
-              placeholder="..."
+              placeholder="Enter your caption"
             />
           </InputGroup>
+          <ButtonToolbar>
+            <Button bsStyle="default" bsSize="large" onClick={this.handleSubmit.bind(this)}>Submit</Button>
+          </ButtonToolbar>
         </FormGroup>
       </Form>
+      </div>
     );
   }
 }
