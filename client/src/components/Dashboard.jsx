@@ -8,6 +8,7 @@ import RoomsTable from './RoomsTable';
 
 const Dashboard = (props) => {
   const userProfile = props.profile ? props.profile : {};
+  const roomsCount = props.roomTableData ? props.roomTableData.size : 0;
 
   return (
     <div>
@@ -30,9 +31,11 @@ const Dashboard = (props) => {
         <Col md={6} >
           <Panel>
             <h3 className="text-center"> room-list </h3>
-            <p className="text-center"> active rooms: 0 </p>
+            <p className="text-center"> active rooms: { roomsCount } </p>
           </Panel>
-          <RoomsTable />
+          <RoomsTable
+            data={props.roomTableData}
+          />
         </Col>
       </Row>
     </div>
