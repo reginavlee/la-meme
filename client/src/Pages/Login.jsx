@@ -10,6 +10,7 @@ export class Login extends React.Component {
   }
   componentDidMount() {
     console.log(localStorage.getItem('id_token'));
+    this.props.auth.login();
   }
   render() {
     return (

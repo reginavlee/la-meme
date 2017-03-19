@@ -45,6 +45,18 @@ function PublicRoute({ component: Component, authed, authService, login, ...rest
   );
 }
 
+// redirects from login to dash if user is already logged in
+function alreadyLoggedIn(nextState, replaceState) {
+  if (auth.loggedIn())
+    replaceState({ nextPathname: nextState.location.pathname }, '/dashboard')
+}
+
+// // redirects from home to login automatically
+// function autoRedirectHome(nextState, replaceState) {
+//   if (true)
+//     replaceState({ nextPathname: nextState.location.pathname }, '/login')
+// }
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -118,7 +130,7 @@ class App extends Component {
                 { this.state.authed ? <p>Logged in as {this.state.profile.username} </p> : '' }
                 <Switch>
                   <Route exact path="/" component={Home} />
-                  <PublicRoute login={this.login} authService={this.state.auth} authed={this.state.authed} path="/login" path="/" component={LoginPage} />
+                  <PublicRoute login={this.login} authService={this.state.auth} authed={this.state.authed} path="/login" component={LoginPage} onEnter={alreadyLoggedIn} />
                   <PrivateRoute socket={socket} logout={this.logout} userProfile={this.state.profile} authService={this.state.auth} authed={this.state.authed} path="/dashboard" component={Dashboard} />
                   <PrivateRoute socket={socket} authed={this.state.authed} userProfile={this.state.profile} path="/play" component={MemeRoomContainer} />
                   <Route render={() => <h1> Page not found </h1>} />
@@ -140,3 +152,5 @@ App.PropTypes = {
 };
 
 export default App;
+
+//<Redirect from="/" to="/login" />

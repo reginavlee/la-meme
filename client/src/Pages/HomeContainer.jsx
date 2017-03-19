@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router-dom';
 import AuthService from '../../utils/AuthService';
+import { Jumbotron, Button, ButtonGroup } from 'react-bootstrap';
 
 class Home extends Component {
   constructor(props) {
@@ -14,12 +15,20 @@ class Home extends Component {
   render() {
     return (
       <div>
-        <h1>la même</h1>
-        <Link to="/dashboard">Dashboard</Link>
-        <Link to="/login"> Login</Link>
+      <Jumbotron>
+      <div>
+        <img src="http://i.imgur.com/79ctaQX.png" alt="la même"/>
+        <p>A photo captioning game</p>
+      </div>
+      <ButtonGroup>
+        <a href="/login"><Button bsStyle="primary">Login</Button></a>
+      </ButtonGroup>
+      </Jumbotron>
       </div> 
     );
   }
 }
 
 export default Home;
+
+//<a href="/dashboard"><Button bsStyle="primary">Dashboard</Button></a>
