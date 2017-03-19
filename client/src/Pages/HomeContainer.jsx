@@ -2,9 +2,6 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { PageHeader } from 'react-bootstrap';
 
-
-
-
 class Home extends Component {
   constructor(props) {
     super(props);
