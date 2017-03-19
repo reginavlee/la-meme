@@ -131,10 +131,14 @@ class App extends Component {
                 <Switch>
                   <Route exact path="/" component={Home} />
 <<<<<<< HEAD
+<<<<<<< HEAD
                   <PublicRoute login={this.login} authService={this.state.auth} authed={this.state.authed} path="/login" component={LoginPage} onEnter={alreadyLoggedIn} />
 =======
                   <PublicRoute login={this.login} authService={this.state.auth} authed={this.state.authed} path="/login" path="/" component={LoginPage} />
 >>>>>>> Login and homepage work
+=======
+                  <PublicRoute login={this.login} authService={this.state.auth} authed={this.state.authed} path="/login" component={LoginPage} onEnter={alreadyLoggedIn} />
+>>>>>>> Homepage styling/ login flow
                   <PrivateRoute socket={socket} logout={this.logout} userProfile={this.state.profile} authService={this.state.auth} authed={this.state.authed} path="/dashboard" component={Dashboard} />
                   <PrivateRoute socket={socket} authed={this.state.authed} userProfile={this.state.profile} path="/play" component={MemeRoomContainer} />
                   <Route render={() => <h1> Page not found </h1>} />

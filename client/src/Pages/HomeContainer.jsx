@@ -1,10 +1,17 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import AuthService from '../../utils/AuthService';
 import { Jumbotron, Button, ButtonGroup } from 'react-bootstrap';
 =======
+=======
+>>>>>>> Homepage styling/ login flow
 import { PageHeader } from 'react-bootstrap';
+=======
+import AuthService from '../../utils/AuthService';
+import { Jumbotron, Button, ButtonGroup } from 'react-bootstrap';
+>>>>>>> Homepage styling/ login flow
 
 <<<<<<< HEAD
 
@@ -30,10 +37,14 @@ class Home extends Component {
     return (
       <div>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> Homepage styling/ login flow
       <Jumbotron>
       <div>
         <img src="http://i.imgur.com/79ctaQX.png" alt="la même"/>
         <p>A photo captioning game</p>
+<<<<<<< HEAD
       </div>
       <ButtonGroup>
         <a href="/login"><Button bsStyle="primary">Login</Button></a>
@@ -57,6 +68,14 @@ class Home extends Component {
         <Link to="/dashboard">Dashboard</Link>
       </div>
 >>>>>>> touch-up homepage, v1
+=======
+      </div>
+      <ButtonGroup>
+        <a href="/login"><Button bsStyle="primary">Login</Button></a>
+      </ButtonGroup>
+      </Jumbotron>
+      </div> 
+>>>>>>> Homepage styling/ login flow
     );
   }
 }
