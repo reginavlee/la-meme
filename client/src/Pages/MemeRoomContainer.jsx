@@ -1,16 +1,12 @@
 import React, { Component } from 'react';
-import io from 'socket.io-client';
-import genRandomTokenString from '../../utils/genRandomString';
-import MemeRoom from '../components/MemeRoom';
 import axios from 'axios';
 
+import MemeRoom from '../components/MemeRoom';
 
 class Game extends Component {
   constructor(props) {
     super(props);
-    const token = genRandomTokenString();
     this.state = {
-      authToken: token,
       currentRoom: '',
       playerCount: 0,
       spectatorCount: 0,
@@ -21,35 +17,19 @@ class Game extends Component {
     };
     this.emitMessage = this.emitMessage.bind(this);
   }
-  getMemePhoto() {
-    var that = this;
-    axios.get("http://localhost:3000/api/memes")
-      .then((results) => {
-        that.setState({
-          memePhoto: results.data
-        });
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }
   componentWillMount() {
     const payload = {
       location: 'memeroom',
       user: this.props.profile.username
     };
     this.props.socket.emit('location:memeroom', payload);
-    this.createRoom();
-    this.renderMessage();
+    this.setRoom();
     this.RoomOccupancy();
     this.getMemePhoto();
     window.onbeforeunload = () => {
       this.removeUser();
     };
   }
-  /**
-   * fire off socket connection on component mounting
-   */
   componentDidMount() {
     this.listenforCountdown();
     this.listenForConnectionType();
@@ -68,9 +48,32 @@ class Game extends Component {
     this.removeUser();
     window.onbeforeunload = null;
   }
+  getMemePhoto() {
+    var that = this;
+    axios.get("http://localhost:3000/api/memes")
+      .then((results) => {
+        that.setState({
+          memePhoto: results.data
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
   /**
-   * removes a user on the server
+   * creates a room on the server to hold sockets
+   * listens for a join event and updates user states
    */
+  setRoom() {
+    this.props.socket.on('join', (roomname) => {
+      this.setState({
+        currentRoom: roomname,
+      });
+    });
+  }
+  /**
+  * removes a user on the server
+  */
   removeUser() {
     const room = this.state.currentRoom;
     const username = this.props.profile.username;
@@ -83,29 +86,18 @@ class Game extends Component {
     this.props.socket.emit('left-meme-room', payload);
   }
   /**
-   * creates a room on the server to hold sockets
-   */
-  createRoom() {
-    const self = this;
-    this.props.socket.emit('create-room', 'testRoom');
-    this.props.socket.on('join', (roomname) => {
-      self.setState({
-        currentRoom: roomname,
-      });
-    });
-  }
-  /**
    * triggers the server to start the countdown
    */
   triggerCountDown() {
     if (!this.state.countingDown && this.state.playerCount === 2 && this.state.connectionType !== 'spectator') {
-      this.props.socket.emit('start-round', 'testRoom');
+      this.props.socket.emit('start-round', this.state.currentRoom);
     }
   }
   /**
    * listens for server's assignment of connectionType
    */
   listenForConnectionType() {
+    console.log('fired');
     this.props.socket.on('status', (connectionType) => {
       this.setState({
         connectionType
@@ -227,7 +219,6 @@ class Game extends Component {
     });
   }
   render() {
-    console.log(this.state, this.props);
     return (
       <MemeRoom
         currentRoom={this.state.currentRoom}

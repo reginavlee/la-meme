@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import { Grid, Row, Col, Button } from 'react-bootstrap';
-import io from 'socket.io-client';
-import genRandomTokenString from '../../utils/genRandomString';
+import { default as swal } from 'sweetalert2';
 
 import AlertsContainer from '../components/alerts/AlertsContainer';
 import Dashboard from '../components/Dashboard';
@@ -9,12 +9,12 @@ import Dashboard from '../components/Dashboard';
 class DashboardContainer extends Component {
   constructor(props) {
     super(props);
-    const token = genRandomTokenString();
     this.state = {
       users: new Map(),
       onlineCount: 0,
       newUser: false
     };
+    this.setupUserInvite = this.setupUserInvite.bind(this);
   }
   /**
    * Init user creation on the server
@@ -38,6 +38,13 @@ class DashboardContainer extends Component {
       });
     });
     this.listenForGlobalCount();
+    this.listenForInvites();
+    this.props.socket.on('join-memeroom', (data) => {
+      this.setState({
+        redirect: true
+      });
+      console.log(data);
+    });
   }
   componentWillReceiveProps(nextProps) {
     this.listenForGlobalCount();
@@ -46,11 +53,55 @@ class DashboardContainer extends Component {
     this.handleRoomData();
   }
   componentDidUpdate(prevProps, prevState) {
-    console.log(this.state);
   }
   componentWillUnmount() {
     this.emitLeftDashboard();
     window.onbeforeunload = null;
+  }
+  /**
+   * Responsible for setting up user invites
+   */
+  setupUserInvite(socketId) {
+    swal({
+      title: 'Room config',
+      text: 'please enter a room-name',
+      input: 'text',
+      confirmButtonText: 'send invite',
+      showCancelButton: true
+    })
+    .then((roomname) => {
+      console.log(roomname);
+      console.log('send invite to this socket', socketId);
+      const payload = {
+        sender: this.state.user,
+        reciever: socketId,
+        roomname
+      };
+      this.props.socket.emit('user:invite', payload);
+    });
+  }
+  listenForInvites() {
+    this.props.socket.on('invite', (sender, cb) => {
+      swal({
+        title: 'Invitation',
+        text: `user: ${sender} wants to play a game, accept?`,
+        type: 'question',
+        confirmButtonText: 'Accept',
+        showCloseButton: true
+      }).then(() => {
+        // user accepted, lets setup the room on the server ~
+        cb(this.props.socket.id, true);
+      }, (dismiss) => {
+        if (dismiss === 'close' || dismiss === 'overlay') {
+          swal('Invitation cancelled', "don't be a flake", 'error');
+        }
+      })
+      .catch((err) => {
+        if (err) {
+          console.log(err);
+        }
+      });
+    });
   }
   /**
    * {Global-Event} A new user has joined the socket.io server, notify user 
@@ -78,10 +129,19 @@ class DashboardContainer extends Component {
     this.props.socket.emit('create-user', payload);
   }
   emitJoinedDashboard(username) {
-    this.props.socket.emit('joined-dashboard', username);
+    console.log('joined dashboard!');
+    const payload = {
+      user: username,
+      location: 'dashboard'
+    };
+    this.props.socket.emit('location:dashboard', payload);
   }
   emitLeftDashboard(username) {
-    this.props.socket.emit('left-dashboard');
+    const payload = {
+      user: username,
+      location: ''
+    };
+    this.props.socket.emit('left-dashboard', payload);
   }
   listenForGlobalCount() {
     const self = this;
@@ -97,11 +157,11 @@ class DashboardContainer extends Component {
     });
   }
   listenForRoomData() {
-    this.props.socket.on('rooms-data', (data) => {
-      this.setState({
-        data
-      });
-    });
+    // this.props.socket.on('rooms-data', (data) => {
+    //   this.setState({
+    //     data
+    //   });
+    // });
   }
   handleRoomData() {
   }
@@ -118,8 +178,12 @@ class DashboardContainer extends Component {
             <Dashboard
               onlineCount={this.state.onlineCount}
               playerTableData={this.state.users}
+              setupUserInvite={this.setupUserInvite}
               profile={this.props.profile}
             />
+            {this.state.redirect ?
+              <Redirect to="/play" />
+              : ''}
           </Col>
         </Row>
         <hr />
