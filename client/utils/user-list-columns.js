@@ -8,7 +8,7 @@ const columns = [
     accessor: 'location',
   },
   {
-    header: 'Socketid',
+    header: 'Socket (click to join)',
     sortable: false,
     accessor: 'sid'
   }

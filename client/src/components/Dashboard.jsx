@@ -21,7 +21,7 @@ const Dashboard = (props) => {
       <Row>
         <Col md={6}>
           <Panel>
-            <h3 className="text-center"> user-list </h3>
+            <h3 className="text-center"> users </h3>
             <p className="text-center"> online users: {props.onlineCount} </p>
           </Panel>
           <PlayerTable
@@ -31,7 +31,7 @@ const Dashboard = (props) => {
         </Col>
         <Col md={6} >
           <Panel>
-            <h3 className="text-center"> room-list </h3>
+            <h3 className="text-center"> rooms </h3>
             <p className="text-center"> active rooms: { roomsCount } </p>
           </Panel>
           <RoomsTable

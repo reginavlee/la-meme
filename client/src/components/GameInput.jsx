@@ -33,22 +33,20 @@ class GameInput extends Component {
   render() {
     return (
     <div>
-      <Form>
+      <Form onSubmit={this.handleSubmit}>
         <FormGroup bsSize="large" className="inputArea">
           <InputGroup>
-            <FormControl 
-              componentClass="textarea"
+            <FormControl
               onChange={this.handleInputChange}
               value={this.state.value}
               memeText={this.state.memeText}
               type="text"
-              rows="2"
               maxLength={49}
               placeholder="Enter your caption"
             />
           </InputGroup>
           <ButtonToolbar>
-            <Button bsStyle="default" bsSize="large" onClick={this.handleSubmit.bind(this)}>Submit</Button>
+            <Button bsStyle="default" type="submit" bsSize="large">Submit</Button>
           </ButtonToolbar>
         </FormGroup>
       </Form>
