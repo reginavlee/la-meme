@@ -8,7 +8,6 @@ class GameDisplay extends Component {
     this.state = {
       gameInput: ''
     };
-
   }
   setGameInput(caption) {
     console.log('fired from game input');

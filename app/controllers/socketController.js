@@ -44,9 +44,7 @@ module.exports = {
     });
   },
   emitCaption(roomname) {
-    console.log(roomname);
     const roomData = Rooms.get(roomname);
-
     for (let key in roomData.players) {
       if (key !== this.id) {
         const caption = roomData.players[key].caption;
@@ -329,7 +327,7 @@ module.exports = {
               console.log('round 1 intermission done, round 2 start');
               return;
             } else {
-              time = 10;
+              time = 12;
               intermission += 1;
               console.log('round 1, 10 seconds over, 15 sec begin');
             }
@@ -344,7 +342,7 @@ module.exports = {
               ioRef.to(room).emit('intermission-over');
               return;
             } else {
-              time = 10;
+              time = 12;
               intermission += 1;
               console.log('round 2, 10 seconds over, 15 sec begin');
               ioRef.to(room).emit('intermission');
@@ -352,7 +350,7 @@ module.exports = {
           }
           if (round === 2) {
             ioRef.to(room).emit('round-over', round);
-            time = 10;
+            time = 12;
             if (intermission === 3) {
               round += 1;
               ioRef.to(room).emit('intermission-over');
