@@ -21,23 +21,22 @@ class GameDisplay extends Component {
         <div id="photo">
           <Image className="photo" src= {this.props.memePhoto} />
           { this.props.connectionType === 'player' ?
-          <GameInput handleMessage={this.props.handleMessage} />
-        : '' }
           <GameInput handleMessage={this.props.handleMessage} setGameInput={this.setGameInput.bind(this)}> 
           </GameInput>
+        : '' }
           </div>
         </Col>
 
         <Well className="meme-content" bsSize="large">
           <div id="display-meme" className="meme-display">
             <Col xs={6} md={4}>
-              <Image className="meme" src={this.props.memePhoto} />
+              <Image className="meme" src={this.props.memePhotoCopy} />
                 <div className="caption">{this.state.gameInput}
               </div>
             </Col>
 
             <Col xs={6} md={4}>
-              <Image className="meme" src={this.props.memePhoto} />
+              <Image className="meme" src={this.props.memePhotoCopy} />
               <div className="caption">other user's caption
               </div>
             </Col>

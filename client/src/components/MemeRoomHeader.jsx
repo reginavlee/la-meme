@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 const MemeRoomHeader = (props) => {
   const spectators = props.spectators;
   const specDisplay = spectators > 0 ? spectators : 0;
+  let color;
 
   return (
     <div id="grad">
@@ -24,9 +25,11 @@ const MemeRoomHeader = (props) => {
           <div className="text-center timer-cont">
             <Link to="/dashboard" >Dashboard</Link>
           <h3> time left: </h3>
-          <Label bsStyle="danger" className="timer">{props.currentTime}</Label>
+          <div id="settingColor">
+          {props.intermission ? color="success" : color="danger"}
           </div>
-
+          <Label bsStyle={color} className="timer">{props.currentTime}</Label>
+          </div>
         </Col>
         <Col xs={4} md={4}>
           <div className="text-center">
