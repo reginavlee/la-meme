@@ -12,8 +12,10 @@ class Home extends Component {
   }
   componentDidMount() {
     Typed.new(".element", {
-      strings: ['When you realize the next 3 months of your life are gone <br> because you joined hack reactor', 'When youre still working on the TA <br> but Brandon and Andrew left 7 hours ago', 'dat booty'],
-      typeSpeed: 0
+      strings: ['When you realize the next 3 months of your life are gone <br> ^500 because you joined hack reactor', 'When youre still working on the TA <br> ^500 but Brandon and Andrew left 7 hours ago', 'dat ^1000 booty'],
+      typeSpeed: 0,
+      backSpeed: -25, 
+      showCursor: false,
     });
   }
   render() {
@@ -30,8 +32,7 @@ class Home extends Component {
             </div>
           </div>
         </div>
-        <hr />
-        <a href="/login"><Button bsStyle="primary">Login</Button></a>
+        <a href="/login"><Button bsStyle="primary" bsSize="large">Login</Button></a>
       </div>
     );
   }
