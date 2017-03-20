@@ -34,11 +34,29 @@ module.exports = {
       // USER INVITE SYSTEM
       socket.on('user:invite', this.handleUserInvite);
 
+      socket.on('update-caption', this.updatePlayerCaption);
+      socket.on('grab-caption', this.emitCaption);
+
       // socket.on('left-dashboard', this.leftDashboard);
       socket.on('chat-message', this.handleMessage);
       socket.on('start-round', this.startRound);
       socket.on('disconnect', this.handleDisconnect);
     });
+  },
+  emitCaption(roomname) {
+    console.log(roomname);
+    const roomData = Rooms.get(roomname);
+
+    for (let key in roomData.players) {
+      if (key !== this.id) {
+        const caption = roomData.players[key].caption;
+        ioRef.sockets.connected[this.id].emit('player-msg', caption);
+      }
+    }
+  },
+  updatePlayerCaption({ roomname, caption }) {
+    const roomData = Rooms.get(roomname);
+    roomData.players[this.id].caption = caption;
   },
   handleUserInvite(payload) {
     const { reciever, sender, roomname } = payload;
@@ -205,7 +223,10 @@ module.exports = {
   addPlayer(room, socket) {
     console.log('player added!');
     const roomData = Rooms.get(room);
-    roomData.players[socket.id] = socket.id;
+    const playerData = {};
+    playerData.sid = socket.id;
+    playerData.caption = '';
+    roomData.players[socket.id] = playerData;
     roomData.playerCount += 1;
     socket.emit('status', 'player');
     Rooms.set(room, roomData);
@@ -252,8 +273,12 @@ module.exports = {
   joinedMemeRoom(payload) {
     const { location, user } = payload;
     const userData = Users.get(user);
-    userData.location = location;
-    Users.set(user, userData);
+    try {
+      userData.location = location;
+      Users.set(user, userData);
+    } catch (err) {
+      console.log(err);
+    }
     // update global dashboard to reflect players location
     ioRef.emit('connected-user', Users.size, userData, user);
   },

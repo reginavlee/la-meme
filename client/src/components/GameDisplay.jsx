@@ -10,20 +10,26 @@ class GameDisplay extends Component {
     };
 
   }
-    setGameInput(text) {
-    this.setState({gameInput: text})
+  setGameInput(caption) {
+    console.log('fired from game input');
+    // send socket.io
+    const payload = {
+      caption,
+      roomname: this.props.currentRoom
+    };
+    this.props.socket.emit('update-caption', payload);
+    this.setState({ gameInput: caption });
     console.log(this.state.gameInput);
   }
   render() {
     return (
       <div>
         <Col xs={12} md={12}>
-        <div id="photo">
-          <Image className="photo" src= {this.props.memePhoto} />
-          { this.props.connectionType === 'player' ?
-          <GameInput handleMessage={this.props.handleMessage} setGameInput={this.setGameInput.bind(this)}> 
-          </GameInput>
-        : '' }
+          <div id="photo">
+            <Image className="photo" src= {this.props.memePhoto} />
+            { this.props.connectionType === 'player' ?
+              <GameInput handleMessage={this.props.handleMessage} setGameInput={this.setGameInput.bind(this)} /> 
+            : '' }
           </div>
         </Col>
 
@@ -37,7 +43,7 @@ class GameDisplay extends Component {
 
             <Col xs={6} md={4}>
               <Image className="meme" src={this.props.memePhotoCopy} />
-              <div className="caption">other user's caption
+              <div className="caption">{this.props.player2Caption}
               </div>
             </Col>
             {/* <ul id="messages" />*/}
