@@ -34,11 +34,27 @@ module.exports = {
       // USER INVITE SYSTEM
       socket.on('user:invite', this.handleUserInvite);
 
+      socket.on('update-caption', this.updatePlayerCaption);
+      socket.on('grab-caption', this.emitCaption);
+
       // socket.on('left-dashboard', this.leftDashboard);
       socket.on('chat-message', this.handleMessage);
       socket.on('start-round', this.startRound);
       socket.on('disconnect', this.handleDisconnect);
     });
+  },
+  emitCaption(roomname) {
+    const roomData = Rooms.get(roomname);
+    for (let key in roomData.players) {
+      if (key !== this.id) {
+        const caption = roomData.players[key].caption;
+        ioRef.sockets.connected[this.id].emit('player-msg', caption);
+      }
+    }
+  },
+  updatePlayerCaption({ roomname, caption }) {
+    const roomData = Rooms.get(roomname);
+    roomData.players[this.id].caption = caption;
   },
   handleUserInvite(payload) {
     const { reciever, sender, roomname } = payload;
@@ -205,7 +221,10 @@ module.exports = {
   addPlayer(room, socket) {
     console.log('player added!');
     const roomData = Rooms.get(room);
-    roomData.players[socket.id] = socket.id;
+    const playerData = {};
+    playerData.sid = socket.id;
+    playerData.caption = '';
+    roomData.players[socket.id] = playerData;
     roomData.playerCount += 1;
     socket.emit('status', 'player');
     Rooms.set(room, roomData);
@@ -252,8 +271,12 @@ module.exports = {
   joinedMemeRoom(payload) {
     const { location, user } = payload;
     const userData = Users.get(user);
-    userData.location = location;
-    Users.set(user, userData);
+    try {
+      userData.location = location;
+      Users.set(user, userData);
+    } catch (err) {
+      console.log(err);
+    }
     // update global dashboard to reflect players location
     ioRef.emit('connected-user', Users.size, userData, user);
   },
@@ -304,7 +327,7 @@ module.exports = {
               console.log('round 1 intermission done, round 2 start');
               return;
             } else {
-              time = 10;
+              time = 12;
               intermission += 1;
               console.log('round 1, 10 seconds over, 15 sec begin');
             }
@@ -319,7 +342,7 @@ module.exports = {
               ioRef.to(room).emit('intermission-over');
               return;
             } else {
-              time = 10;
+              time = 12;
               intermission += 1;
               console.log('round 2, 10 seconds over, 15 sec begin');
               ioRef.to(room).emit('intermission');
@@ -327,7 +350,7 @@ module.exports = {
           }
           if (round === 2) {
             ioRef.to(room).emit('round-over', round);
-            time = 10;
+            time = 12;
             if (intermission === 3) {
               round += 1;
               ioRef.to(room).emit('intermission-over');

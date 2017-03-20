@@ -18,10 +18,13 @@ const MemeRoom = (props) => {
       <Row className="game-board">
         <Col xs={12} md={12} >
           <GameDisplay
+            player2Caption={props.player2Caption}
             handleMessage={props.handleMessage}
             connectionType={props.connectionType}
             memePhoto={props.memePhoto}
             memePhotoCopy={props.memePhotoCopy}
+            socket={props.socket}
+            currentRoom={props.currentRoom}
           />
         </Col>
       </Row>

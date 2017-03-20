@@ -107,16 +107,26 @@ class Game extends Component {
       });
     });
   }
+  grabPlayerInput() {
+    this.props.socket.on('player-msg', (caption) => {
+      console.log('got player MSG:   ', caption);
+      this.setState({
+        player2Caption: caption
+      });
+    });
+  }
   /**
    * round is over, updates round count
    */
   roundOver() {
     const self = this;
     this.props.socket.on('round-over', (round) => {
-      console.log(`round ${round} is over!`);
+      this.props.socket.emit('grab-caption', this.state.currentRoom);
+      console.log('grab caption fired', this.state.currentRoom);
       const count = round + 1;
       this.hideMemePhoto();
       this.showMeme();
+      this.grabPlayerInput();
       self.setState({
         countingDown: false,
         round: count
@@ -232,6 +242,8 @@ class Game extends Component {
         intermission={this.state.intermission}
         memePhoto={this.state.memePhoto}
         memePhotoCopy={this.state.memePhotoCopy}
+        socket={this.props.socket}
+        player2Caption={this.state.player2Caption}
       />
     );
   }
