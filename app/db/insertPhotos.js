@@ -21,4 +21,15 @@ const insertPhotos = () => {
 
 insertPhotos();
 
+/**
+Meme.create({
+  href: data[3].href
+}).then((obj) => {
+  obj.save();
+}).catch((err) => {
+  console.log(err);
+});
+**/
+
 module.exports = db.Meme;
+
