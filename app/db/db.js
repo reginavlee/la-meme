@@ -6,7 +6,6 @@ const Sequelize = require('sequelize');
 
 const db = new Sequelize('postgres://avehvksm:BsxxRvnB0sMhTN48xMclrogYVhcmLlxY@stampy.db.elephantsql.com:5432/avehvksm');
 
-
 db.authenticate()
   .then(() => {
     console.log('Successful Connection to the database');
