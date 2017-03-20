@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import AuthService from '../../utils/AuthService';
 import { Jumbotron, Button, ButtonGroup, PageHeader } from 'react-bootstrap';
 
+const wellStyles = {maxWidth: 400, margin: '0 auto 10px'};
+
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -32,7 +34,7 @@ class Home extends Component {
             </div>
           </div>
         </div>
-        <a href="/login"><Button bsStyle="primary" bsSize="large">Login</Button></a>
+        <a href="/login"><Button bsStyle="primary" bsSize="large" style={wellStyles} block>Login</Button></a>
       </div>
     );
   }
