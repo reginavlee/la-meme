@@ -25,7 +25,7 @@ class Home extends Component {
         <div className="text-center">
           <div className="wrapper-showcase text-center">
             <div className="text-center home-meme">
-              <img className="text-center" src="https://files.slack.com/files-pri/T2SV1LBC6-F4G53DWKF/screen_shot_2017-03-09_at_7.53.33_am.png" height="600px" />
+              <img className="text-center homePhoto" src="https://s3-us-west-2.amazonaws.com/lameme/joshmeme.png" />
               <span className="element text-center overlay" />
             </div>
           </div>
