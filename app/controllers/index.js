@@ -18,7 +18,7 @@ module.exports = {
   memes: {
     // finds a random url from database
     get: (req, res) => {
-      const x = Math.floor(Math.random() * 47);
+      const x = Math.ceil(Math.random() * 47);
       Memes.findAll({
         where: { id: x }
       })

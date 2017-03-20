@@ -112,3 +112,13 @@
 #settingColor {
   display:none;
 }
+
+.home-meme {
+  width: 555px;
+  margin-left: 75px;
+}
+
+.homePhoto {
+  width: 400px;
+  margin-bottom: 10px;
+}
