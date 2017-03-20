@@ -13,9 +13,11 @@ class Game extends Component {
       timer: 0,
       round: 0,
       intermission: null,
-      memePhoto: []
+      memePhoto: [],
+      memePhotoCopy: []
     };
     this.emitMessage = this.emitMessage.bind(this);
+    this.MemePhoto = this.MemePhoto.bind(this);
   }
   componentWillMount() {
     const payload = {
@@ -25,7 +27,7 @@ class Game extends Component {
     this.props.socket.emit('location:memeroom', payload);
     this.setRoom();
     this.RoomOccupancy();
-    this.getMemePhoto();
+    this.MemePhoto();
     window.onbeforeunload = () => {
       this.removeUser();
     };
@@ -48,18 +50,7 @@ class Game extends Component {
     this.removeUser();
     window.onbeforeunload = null;
   }
-  getMemePhoto() {
-    var that = this;
-    axios.get("http://localhost:3000/api/memes")
-      .then((results) => {
-        that.setState({
-          memePhoto: results.data
-        });
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }
+
   /**
    * creates a room on the server to hold sockets
    * listens for a join event and updates user states
@@ -159,6 +150,9 @@ class Game extends Component {
    */
   hideMemePhoto() {
     document.getElementById('photo').className = 'photo-display';
+    this.setState({
+      memePhotoCopy: this.state.memePhoto
+    })
   }
 
   /**
@@ -173,7 +167,6 @@ class Game extends Component {
     });
     this.props.socket.on('intermission-over', () => {
       self.hideMeme();
-      this.getMemePhoto();
       self.showMemePhoto();
       self.setState({
         intermission: false
@@ -195,6 +188,15 @@ class Game extends Component {
         spectatorCount
       });
     });
+  }
+  
+  MemePhoto() {
+    const self = this;
+    this.props.socket.on('photoUrl', (photoUrl) => {
+      self.setState({
+        memePhoto: photoUrl
+      })
+    })
   }
   /**
    * handles sending message through socket.io ( not used as of now, maybe chat later? )
@@ -229,6 +231,7 @@ class Game extends Component {
         connectionType={this.state.connectionType}
         intermission={this.state.intermission}
         memePhoto={this.state.memePhoto}
+        memePhotoCopy={this.state.memePhotoCopy}
       />
     );
   }

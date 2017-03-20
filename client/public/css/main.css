@@ -108,3 +108,7 @@
     top:0;
     background: black;
 }
+
+#settingColor {
+  display:none;
+}

@@ -1,8 +1,22 @@
 const Users = new Map();
 const Rooms = new Map();
 
+const axios = require('axios');
+const router = require('../../routes');
+
 let ioRef;
 let self;
+
+	function getMemePhoto(room, io) {
+  axios.get('http://localhost:3000/api/memes')
+  .then((results) => {
+    const photoUrl = results.data;
+    io.in(room).emit('photoUrl', photoUrl);
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+}
 module.exports = {
   init(io) {
     self = this;
@@ -258,6 +272,7 @@ module.exports = {
   handleRoundStart(room) {
     let times = 0;
     const roomData = Rooms.get(room);
+    getMemePhoto(room, ioRef);
     roomData.playing = false;
     if (roomData.size < 2) {
       // emit something here to client telling them not enough users
@@ -272,6 +287,9 @@ module.exports = {
       const countDown = setInterval(() => {
         ioRef.to(room).emit('count-down', { time, countingDown: true });
         time -= 1;
+        if (time === 11) {
+          getMemePhoto(room, ioRef);
+        }
         // time elapsed lets do something
         if (time === -1) {
           if (round === 0) {
@@ -314,6 +332,7 @@ module.exports = {
               round += 1;
               ioRef.to(room).emit('intermission-over');
               ioRef.to(room).emit('game-over');
+              ioRef.in(room).emit('photoUrl', 'http://www.powerpointhintergrund.com/uploads/game-over-png-16.png');
               if (round === 3) {
                 clearInterval(countDown);
                 roomData.active = false;
