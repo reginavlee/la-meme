@@ -31,6 +31,8 @@ module.exports = {
       socket.on('left-meme-room', this.removeUser);
       socket.on('join-room', this.joinRoom);
 
+      socket.on('grab-dashboard-data', this.emitDashboardData);
+
       // USER INVITE SYSTEM
       socket.on('user:invite', this.handleUserInvite);
 
@@ -43,13 +45,23 @@ module.exports = {
       socket.on('disconnect', this.handleDisconnect);
     });
   },
+  emitDashboardData() {
+    Users.forEach((value, key) => {
+      const { location, sid } = value;
+      ioRef.sockets.connected[this.id].emit('dashboard-data', { username: key, sid, location });
+    });
+  },
   emitCaption(roomname) {
     const roomData = Rooms.get(roomname);
-    for (let key in roomData.players) {
-      if (key !== this.id) {
-        const caption = roomData.players[key].caption;
-        ioRef.sockets.connected[this.id].emit('player-msg', caption);
+    try {
+      for (let key in roomData.players) {
+        if (key !== this.id) {
+          const caption = roomData.players[key].caption;
+          ioRef.sockets.connected[this.id].emit('player-msg', caption);
+        }
       }
+    } catch (error) {
+      console.log(error);
     }
   },
   updatePlayerCaption({ roomname, caption }) {
@@ -146,6 +158,10 @@ module.exports = {
       // grab room so we can determine whether user is a player or spectator
       const roomData = Rooms.get(roomname);
       console.log(roomData, 'this is roomData');
+
+      // emit successfully join
+      self.emitSuccessfulJoin(roomname, this);
+
       if (roomData.playerCount < 2) {
         // if room size < 2, add player as a player to our Map
         self.addPlayer(roomname, this);

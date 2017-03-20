@@ -231,6 +231,7 @@ class Game extends Component {
     });
   }
   render() {
+    console.log(this.state.connectionType);
     return (
       <MemeRoom
         currentRoom={this.state.currentRoom}
