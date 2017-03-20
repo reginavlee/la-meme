@@ -304,7 +304,7 @@ module.exports = {
               console.log('round 1 intermission done, round 2 start');
               return;
             } else {
-              time = 15;
+              time = 10;
               intermission += 1;
               console.log('round 1, 10 seconds over, 15 sec begin');
             }
@@ -319,7 +319,7 @@ module.exports = {
               ioRef.to(room).emit('intermission-over');
               return;
             } else {
-              time = 15;
+              time = 10;
               intermission += 1;
               console.log('round 2, 10 seconds over, 15 sec begin');
               ioRef.to(room).emit('intermission');
@@ -327,7 +327,7 @@ module.exports = {
           }
           if (round === 2) {
             ioRef.to(room).emit('round-over', round);
-            time = 15;
+            time = 10;
             if (intermission === 3) {
               round += 1;
               ioRef.to(room).emit('intermission-over');
