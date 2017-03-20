@@ -129,7 +129,7 @@ class App extends Component {
             <Col xs={12} md={8} mdOffset={1}>
               <div>
                 <Switch>
-                  <Route exact path="/" component={Home} />
+                  <Route exact path="/" component={Home}/>
                   <PublicRoute login={this.login} authService={this.state.auth} authed={this.state.authed} path="/login" component={LoginPage} onEnter={alreadyLoggedIn} />
                   <PrivateRoute socket={socket} logout={this.logout} userProfile={this.state.profile} authService={this.state.auth} authed={this.state.authed} path="/dashboard" component={Dashboard} />
                   <PrivateRoute socket={socket} authed={this.state.authed} userProfile={this.state.profile} path="/play" component={MemeRoomContainer} />
