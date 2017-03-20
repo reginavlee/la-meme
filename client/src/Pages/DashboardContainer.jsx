@@ -27,6 +27,15 @@ class DashboardContainer extends Component {
   componentWillMount() {
     this.createUser(this.props.profile.username);
     this.emitJoinedDashboard(this.props.profile.username);
+    this.props.socket.emit('grab-dashboard-data');
+    this.props.socket.on('dashboard-data', (userInfo) => {
+      const connectedUsers = this.state.users;
+      const { username, sid, location } = userInfo;
+      connectedUsers.set(username, { sid, location });
+      this.setState({
+        users: connectedUsers
+      });
+    });
     window.onbeforeunload = () => {
       this.emitLeftDashboard();
     };
