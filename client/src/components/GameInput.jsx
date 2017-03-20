@@ -41,6 +41,7 @@ class GameInput extends Component {
               value={this.state.value}
               memeText={this.state.memeText}
               type="text"
+              maxLength={49}
               placeholder="Enter your caption"
             />
           </InputGroup>
