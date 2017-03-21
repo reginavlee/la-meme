@@ -76,17 +76,14 @@
   height: 125px;
 }
 
-
-
+/*homepage typed.js text settings*/
 .element {
-
   z-index: 10;
   font-size: 24px;
   color:deeppink;
   text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
   font-family: Impact, "Arial Black", "sans serif";
   background: white;
-  /*background-image:url('https://files.slack.com/files-pri/T2SV1LBC6-F4G53DWKF/screen_shot_2017-03-09_at_7.53.33_am.png') no-repeat;*/
 }
 
 .home-meme {
@@ -102,6 +99,8 @@
   height: 200px;*/
   z-index: -100;
 }
+
+/*homepage typed.js container settings (match with background) */
 .wrapper-showcase div.home-meme span {
     width: 100%;
     height: 100%;

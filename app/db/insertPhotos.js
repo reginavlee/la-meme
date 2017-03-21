@@ -33,4 +33,3 @@ Meme.create({
 
 
 module.exports = db.Meme;
-

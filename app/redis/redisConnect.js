@@ -6,5 +6,4 @@ const redis = Promise.promisifyAll(require('redis'));
 //   console.log('redis connected');
 // });
 
-
 module.exports = redis;

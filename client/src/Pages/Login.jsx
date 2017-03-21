@@ -31,7 +31,3 @@ export class Login extends React.Component {
 }
 
 export default Login;
-  // static propTypes = {
-  //   location: T.object,
-  //   auth: T.instanceOf(AuthService)
-  // }
