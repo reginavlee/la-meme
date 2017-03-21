@@ -39,5 +39,3 @@ class Home extends Component {
 }
 
 export default Home;
-
-//<a href="/dashboard"><Button bsStyle="primary">Dashboard</Button></a>

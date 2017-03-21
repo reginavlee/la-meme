@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 import PlayerTable from './PlayerTable';
 import RoomsTable from './RoomsTable';
 
-
 const Dashboard = (props) => {
   const userProfile = props.profile ? props.profile : {};
   const roomsCount = props.roomTableData ? props.roomTableData.size : 0;
@@ -45,4 +44,3 @@ const Dashboard = (props) => {
 };
 
 export default Dashboard;
-

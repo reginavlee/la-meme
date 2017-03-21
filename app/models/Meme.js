@@ -7,4 +7,3 @@ const Memes = db.define('Memes', {
 Memes.sync();
 
 module.exports = Memes;
-

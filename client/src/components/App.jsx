@@ -52,12 +52,6 @@ function alreadyLoggedIn(nextState, replaceState) {
     replaceState({ nextPathname: nextState.location.pathname }, '/dashboard')
 }
 
-// // redirects from home to login automatically
-// function autoRedirectHome(nextState, replaceState) {
-//   if (true)
-//     replaceState({ nextPathname: nextState.location.pathname }, '/login')
-// }
-
 class App extends Component {
   constructor(props) {
     super(props);
@@ -152,5 +146,3 @@ App.PropTypes = {
 };
 
 export default App;
-
-//<Redirect from="/" to="/login" />

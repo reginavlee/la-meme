@@ -246,9 +246,6 @@ class DashboardContainer extends Component {
         <hr />
         <Row>
           <Col md={12}>
-            {/* <AlertsContainer
-              newUser={this.state.newUser}
-            />*/}
           </Col>
         </Row>
       </Grid>

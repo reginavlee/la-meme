@@ -28,7 +28,6 @@ const MemeRoom = (props) => {
           />
         </Col>
       </Row>
-      {/* <Button bsStyle="primary" onClick={this.createRoom}> Click</Button> */}
     </Grid>
     </div>
   );

@@ -2,7 +2,6 @@ const User = require('./User');
 const Meme = require('./Meme');
 const Room = require('./Room');
 
-
 module.exports = {
   users: {
     get: () => {

@@ -2,10 +2,6 @@ import React, { Component } from 'react';
 import { Well, Col, Image } from 'react-bootstrap';
 import GameInput from './GameInput';
 
-{/**
-import {  handleCaption, firstLine, secondLine, thirdLine, fourthLine} from '../../utils/captionHandling';
-**/}
-
 class GameDisplay extends Component {
   constructor(props) {
     super(props);

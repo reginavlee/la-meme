@@ -1,6 +1,5 @@
 import Auth0Lock from 'auth0-lock';
 import axios from 'axios';
-// import { browserHistory } from 'react-router-dom';
 
 export default class AuthService {
   constructor(clientId, domain) {
@@ -32,7 +31,7 @@ export default class AuthService {
     });
   }
   login() {
-    // Call the show method to display the widget.
+    // Call the show method to display the login widget.
     this.lock.show();
   }
   getProfile(cb) {

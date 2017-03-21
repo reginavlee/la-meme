@@ -31,9 +31,6 @@ const MemeRoomHeader = (props) => {
         </Col>
         <Col xs={4} md={4}>
           <div className="text-center">
-          {/**
-            <h3><Label bsStyle="danger" bsSize="large">exit</Label></h3>
-           **/}
             <br />
             <Link to="/dashboard" >Dashboard</Link>
             <h3> spectators: <Label bsStyle="primary">{specDisplay}</Label> </h3>
