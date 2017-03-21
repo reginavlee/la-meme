@@ -15,16 +15,16 @@ export class Login extends React.Component {
   render() {
     return (
       <div>
-      <Jumbotron>
-        <img src="http://i.imgur.com/79ctaQX.png" alt="la même"/>
-        <p>Sign up or log in to continue</p>
-        <Button
-          bsStyle="primary"
-          onClick={this.props.auth.login}
-        >
-          Login
-        </Button>
-      </Jumbotron>
+        <Jumbotron>
+          <img src="http://i.imgur.com/79ctaQX.png" alt="la même" />
+          <p>Sign up or log in to continue</p>
+          <Button
+            bsStyle="primary"
+            onClick={this.props.auth.login}
+          >
+            Login
+          </Button>
+        </Jumbotron>
       </div>
     );
   }

@@ -212,11 +212,11 @@ class DashboardContainer extends Component {
     });
   }
   listenForRoomData() {
-    // this.props.socket.on('rooms-data', (data) => {
-    //   this.setState({
-    //     data
-    //   });
-    // });
+    this.props.socket.on('rooms-data', (data) => {
+      this.setState({
+        data
+      });
+    });
   }
   handleRoomData() {
   }
@@ -224,17 +224,6 @@ class DashboardContainer extends Component {
     return (
       <Grid>
         <Row>
-          <Button bsStyle="primary" onClick={ () => {
-            this.props.auth.logout();
-            this.props.logout();
-            console.log('fired');
-            }}>Logout</Button> 
-            <Button 
-              bsStyle="primary"
-              onClick={this.userCreatedRoom}
-            >
-            Create Room
-            </Button>
           <Col md={12}>
             <Dashboard
               onlineCount={this.state.onlineCount}
@@ -243,6 +232,9 @@ class DashboardContainer extends Component {
               joinRoom={this.joinRoom}
               profile={this.props.profile}
               roomTableData={this.state.rooms}
+              auth={this.props.auth}
+              logout={this.props.logout}
+              userCreatedRoom={this.userCreatedRoom}
             />
             {this.state.redirect ?
               <Redirect to="/play" />
@@ -250,10 +242,6 @@ class DashboardContainer extends Component {
           </Col>
         </Row>
         <hr />
-        <Row>
-          <Col md={12}>
-          </Col>
-        </Row>
       </Grid>
     );
   }

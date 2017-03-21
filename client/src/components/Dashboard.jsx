@@ -1,6 +1,5 @@
 import React from 'react';
-import { Col, Panel, Row, Image } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Col, Panel, Row, Image, Button } from 'react-bootstrap';
 
 import PlayerTable from './PlayerTable';
 import RoomsTable from './RoomsTable';
@@ -11,15 +10,35 @@ const Dashboard = (props) => {
   return (
     <div>
       <Row>
-        <div className="text-center">
-          <Image className="text-center profile-photo" alt='profile_img' src={userProfile.picture} circle thumbnail />
-          {userProfile ? <h3>{userProfile.username} </h3> : ''}
-          <hr />
-        </div>
+        <Col>
+          <div className="text-center">
+            <Image className="text-center profile-photo" alt='profile_img' src={userProfile.picture} circle thumbnail />
+            {userProfile ? <h3>{userProfile.username} </h3> : ''}
+            <hr />
+            <div className="text-center">
+              <Button
+                bsStyle="primary"
+                onClick={() => {
+                  props.auth.logout();
+                  props.logout();
+                }}
+              >
+                <span className="text-center">Logout</span>
+              </Button>
+              {'  '}
+              <Button
+                bsStyle="primary"
+                onClick={props.userCreatedRoom}
+              >
+                Create Room</Button>
+            </div>
+            <hr />
+          </div>
+        </Col>
       </Row>
       <Row>
         <Col md={6}>
-          <Panel>
+          <Panel className="users">
             <h3 className="text-center"> users </h3>
             <p className="text-center"> online users: {props.onlineCount} </p>
           </Panel>
@@ -29,9 +48,9 @@ const Dashboard = (props) => {
           />
         </Col>
         <Col md={6} >
-          <Panel>
+          <Panel className="rooms">
             <h3 className="text-center"> rooms </h3>
-            <p className="text-center"> active rooms: { roomsCount } </p>
+            <p className="text-center"> active rooms: {roomsCount} </p>
           </Panel>
           <RoomsTable
             data={props.roomTableData}
@@ -44,3 +63,4 @@ const Dashboard = (props) => {
 };
 
 export default Dashboard;
+

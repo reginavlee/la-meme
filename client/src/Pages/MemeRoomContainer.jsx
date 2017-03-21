@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import axios from 'axios';
-
 import MemeRoom from '../components/MemeRoom';
 
   /**
@@ -41,7 +39,7 @@ class Game extends Component {
     this.listenForIntermission();
     this.roundOver();
   }
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate() {
     if (!this.state.countingDown && this.state.playerCount === 2 && this.state.round < 1) {
       this.triggerCountDown();
     }
@@ -142,7 +140,6 @@ class Game extends Component {
   showMeme() {
     console.log('should show meme');
     document.getElementById('display-meme').removeAttribute('class');
-
   }
   /**
    * hides both players memes from everyone
@@ -165,7 +162,7 @@ class Game extends Component {
     document.getElementById('photo').className = 'photo-display';
     this.setState({
       memePhotoCopy: this.state.memePhoto
-    })
+    });
   }
 
   /**
@@ -202,7 +199,6 @@ class Game extends Component {
       });
     });
   }
-  
     /**
    * serves up photo
    */
@@ -211,8 +207,8 @@ class Game extends Component {
     this.props.socket.on('photoUrl', (photoUrl) => {
       self.setState({
         memePhoto: photoUrl
-      })
-    })
+      });
+    });
   }
   /**
    * handles sending message through socket.io ( not used as of now, maybe chat later? )
@@ -237,7 +233,6 @@ class Game extends Component {
     });
   }
   render() {
-    console.log(this.state.connectionType);
     return (
       <MemeRoom
         currentRoom={this.state.currentRoom}

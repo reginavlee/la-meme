@@ -23,15 +23,15 @@ class PlayerTable extends Component {
         style={style}
         columns={columns}
         defaultPageSize={10}
-        getTdProps={(state, rowInfo, column, instance) => {
+        getTdProps={(state, rowInfo, column) => {
           return {
-            onClick: e => {
-              if (column.header === "Socket (click to join)") {
+            onClick: (e) => {
+              if (column.header === 'Socket (click to join)') {
                 this.props.setupUserInvite(e.target.innerHTML);
                 console.log(column);
               }
             }
-          }
+          };
         }}
       />
     );

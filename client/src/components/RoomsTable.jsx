@@ -23,9 +23,9 @@ class RoomsTable extends Component {
         columns={columns}
         defaultPageSize={10}
         data={data}
-        getTdProps={(state, rowInfo, column, instance) => {
+        getTdProps={(state, rowInfo, column) => {
           return {
-            onClick: e => {
+            onClick: (e) => {
               if (column.header === 'Roomname') {
                 this.props.joinRoom(e.target.innerHTML);
               }

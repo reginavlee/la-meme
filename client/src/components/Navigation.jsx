@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Navbar } from 'react-bootstrap';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 class Navigation extends Component {
   constructor(props) {
@@ -9,13 +9,19 @@ class Navigation extends Component {
     };
   }
   render() {
+    console.log(this.props);
     return (
       <Navbar inverse>
         <Navbar.Header>
           <Navbar.Brand>
-            <font>la même</font>
+            {this.props.auth ?
+              <Link to="/dashboard">Dashboard</Link>
+              :
+              <Link to="/login">Login</Link>
+            }
           </Navbar.Brand>
         </Navbar.Header>
+
       </Navbar>
     );
   }

@@ -315,7 +315,7 @@ module.exports = {
     getMemePhoto(room, ioRef);
     roomData.playing = false;
     if (roomData.size < 2) {
-      // emit something here to client telling them not enough users
+      // emit something here to client telling them not enough users ?
       return;
     }
     if (!roomData.playing && times < 1) {
@@ -327,7 +327,7 @@ module.exports = {
       const countDown = setInterval(() => {
         ioRef.to(room).emit('count-down', { time, countingDown: true });
         time -= 1;
-	      
+              
 	// serves up a new photo url during intermission so that there is no lag into the second and third rounds
         if (time === 11) {
           getMemePhoto(room, ioRef);

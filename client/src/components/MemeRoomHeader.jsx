@@ -10,7 +10,7 @@ const MemeRoomHeader = (props) => {
   const spectators = props.spectators;
   const specDisplay = spectators > 0 ? spectators : 0;
   let color;
-
+  //lint error, not sure how to fix ? 
   return (
     <div id="grad">
       <Row className="game-board-header-content">
@@ -20,13 +20,12 @@ const MemeRoomHeader = (props) => {
           <h3> players: <Label bsStyle="primary">{props.roomOccupancy}</Label> </h3>
         </Col>
         <Col xs={4} md={4}>
-          <h1 className="text-center"></h1>
           <div className="text-center timer-cont">
-          <h3> time left: </h3>
-          <div id="settingColor">
-          {props.intermission ? color="success" : color="danger"}
-          </div>
-          <Label bsStyle={color} className="timer">{props.currentTime}</Label>
+            <h3> time left: </h3>
+            <div id="settingColor">
+              { props.intermission ? color='success' : color='danger' }
+            </div>
+            <Label bsStyle={color} className="timer">{props.currentTime}</Label>
           </div>
         </Col>
         <Col xs={4} md={4}>
