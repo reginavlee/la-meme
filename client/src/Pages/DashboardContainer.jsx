@@ -41,7 +41,8 @@ class DashboardContainer extends Component {
     };
   }
   /**
-   * everytime the component mounts, lets listen for the global online count and setState accordingly
+   * everytime the component mounts, lets listen for the global online count, global rooms and setState accordingly
+   * 
    */
   componentDidMount() {
     this.props.socket.on('new-user', (count) => {
@@ -76,7 +77,6 @@ class DashboardContainer extends Component {
     this.listenForGlobalCount();
     this.listenForRoomData();
     this.newUserJoined();
-    this.handleRoomData();
   }
   componentDidUpdate(prevProps, prevState) {
   }
@@ -84,6 +84,9 @@ class DashboardContainer extends Component {
     this.emitLeftDashboard();
     window.onbeforeunload = null;
   }
+  /*
+   * Responsible for invitation room config
+   */
   userCreatedRoom() {
     swal({
       title: 'setup room',
@@ -129,6 +132,9 @@ class DashboardContainer extends Component {
       this.props.socket.emit('user:invite', payload);
     });
   }
+  /*
+   * Handles listening for invites
+   */
   listenForInvites() {
     this.props.socket.on('invite', (sender, cb) => {
       swal({
@@ -169,7 +175,7 @@ class DashboardContainer extends Component {
     });
   }
   /**
-    * create a user on the server using Auth0 token
+    * create a user on the server using their username from auth0 (unique)
     */
   createUser(username) {
     const payload = {
