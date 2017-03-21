@@ -1,3 +1,7 @@
+// could potentially be used to handle up to four lines of text. 
+// Right now maxLength keeps most user input at two lines, 
+// and the two lines are placed at the top and bottom of the picture using top-margin and line-height in css.
+
 let firstLine;
 let secondLine;
 let thirdLine;
