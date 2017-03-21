@@ -7,6 +7,7 @@ const router = require('../../routes');
 let ioRef;
 let self;
 
+//gets the photo url that was served from database and passes it on to the client side
 function getMemePhoto(room, io) {
   axios.get('http://localhost:3000/api/memes')
   .then((results) => {
@@ -326,6 +327,8 @@ module.exports = {
       const countDown = setInterval(() => {
         ioRef.to(room).emit('count-down', { time, countingDown: true });
         time -= 1;
+	      
+	// serves up a new photo url during intermission so that there is no lag into the second and third rounds
         if (time === 11) {
           getMemePhoto(room, ioRef);
         }
