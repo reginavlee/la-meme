@@ -3,6 +3,9 @@ import axios from 'axios';
 
 import MemeRoom from '../components/MemeRoom';
 
+  /**
+   * memePhotoCopy used to continue showing photo while the next photo is getting fetched 
+   */
 class Game extends Component {
   constructor(props) {
     super(props);
@@ -200,6 +203,9 @@ class Game extends Component {
     });
   }
   
+    /**
+   * serves up photo
+   */
   MemePhoto() {
     const self = this;
     this.props.socket.on('photoUrl', (photoUrl) => {
