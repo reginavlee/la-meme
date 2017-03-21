@@ -7,7 +7,7 @@ const router = require('../../routes');
 let ioRef;
 let self;
 
-	function getMemePhoto(room, io) {
+function getMemePhoto(room, io) {
   axios.get('http://localhost:3000/api/memes')
   .then((results) => {
     const photoUrl = results.data;
