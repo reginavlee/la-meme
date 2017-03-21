@@ -16,7 +16,7 @@ module.exports = {
     },
   },
   memes: {
-    // finds a random url from database
+    // finds a random url from database. We have 50 pictures and the id numbering starts at 1
     get: (req, res) => {
       const x = Math.ceil(Math.random() * 49);
       Memes.findAll({
