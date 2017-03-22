@@ -1,10 +1,9 @@
 const Sequelize = require('sequelize');
 const db = require('../db/db');
 
-const Room = db.define('Room', {
-  roomName: Sequelize.STRING,
-  clients: Sequelize.STRING,
+const Rooms = db.define('Rooms', {
+  name: Sequelize.STRING,
 });
-Room.sync();
+Rooms.sync();
 
-module.exports = Room;
+module.exports = Rooms;

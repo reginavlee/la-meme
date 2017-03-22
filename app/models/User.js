@@ -1,9 +1,11 @@
 const Sequelize = require('sequelize');
 const db = require('../db/db');
 
-const User = db.define('User', {
+const Users = db.define('Users', {
   auth0Id: Sequelize.STRING,
+  topScore: Sequelize.NUMBER,
+  name: Sequelize.STRING
 });
-User.sync();
+Users.sync();
 
-module.exports = User;
+module.exports = Users;
