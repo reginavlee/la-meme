@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
+require('dotenv').config();
 
-// insert your url below based on how your connecting to postgres //
-const db = new Sequelize('postgres://avehvksm:BsxxRvnB0sMhTN48xMclrogYVhcmLlxY@stampy.db.elephantsql.com:5432/avehvksm');
+const db = new Sequelize(`postgres://${process.env.eSQL_USERNAME}:${process.env.eSQL_PASSWORD}@${process.env.eSQL_HOSTNAME}:${process.env.eSQL_PORT}/njphjcyj`);
 
 db.authenticate()
   .then(() => {

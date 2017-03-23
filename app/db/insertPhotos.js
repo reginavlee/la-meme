@@ -3,15 +3,15 @@
 // var app = require('../../server.js');
 const db = require('./db.js');
 const data = require('../../data/memephotos.json');
-const Meme = require('../models/Meme');
+const Models = require('../models/index');
 
-let i;
-
+console.log('models', Models);
+console.log('memes', Models.Memes)
 
 // to insert all photos from the data/memephotos.json file into the database
 const insertPhotos = () => {
-  for (i = 0; i < data.length; i += 1) {
-    Meme.create({
+  for (let i = 0; i < data.length; i += 1) {
+    Models.Memes.create({
       href: data[i].href
     }).then((obj) => {
       obj.save();
