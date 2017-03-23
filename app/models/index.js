@@ -6,7 +6,7 @@ const Rooms = db.define('Rooms', {
   name: Sequelize.STRING(),
 });
 
-const Users = db.define('User', {
+const Users = db.define('Users', {
   auth0Id: Sequelize.STRING(),
   topScore: Sequelize.INTEGER(),
   name: Sequelize.STRING()
@@ -28,7 +28,7 @@ const MemeCaptions = db.define('MemeCaptions', {
 // schema relationships
 Users.belongsToMany(Rooms, {through: 'UserRoom'});
 Rooms.belongsToMany(Users, {through: 'UserRoom'});
-Users.hasOne(MemeCaptions);
+Users.hasMany(MemeCaptions);
 MemeCaptions.belongsTo(Users);
 Memes.hasOne(MemeCaptions);
 MemeCaptions.belongsTo(Memes);
