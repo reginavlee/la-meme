@@ -14,31 +14,8 @@ const Users = db.define('Users', {
 });
 
 const UsersRooms = db.define('UsersRooms');
-// {
-  // userID: {
-  //   type: Sequelize.INTEGER(),        
-  //   model: Users,
-  //   key: 'id'
-  // },
-  // roomID: {
-  //   type: Sequelize.INTEGER(),        
-  //   model: Rooms,
-  //   key: 'id'
-  // },
-// }
-// );
 
 const User_Room_Scores = db.define('User_Room_Scores', {
-  // userID: {
-  //   type: Sequelize.INTEGER(),    
-  //   model: Users,
-  //   key: 'id'
-  // },
-  // roomID: {
-  //   type: Sequelize.INTEGER(),    
-  //   model: Rooms,
-  //   key: 'id'
-  // },
   roomScore: Sequelize.INTEGER()
 })
 
