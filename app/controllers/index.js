@@ -1,6 +1,6 @@
-// const models = require('../models/index');
+// const Models = require('../models/index.js');
 
-const Memes = require('../models/Meme');
+const db = require('../models/index.js');
 
 module.exports = {
   users: {
@@ -19,7 +19,7 @@ module.exports = {
     // finds a random url from database. We have 50 pictures and the id numbering starts at 1
     get: (req, res) => {
       const x = Math.ceil(Math.random() * 49);
-      Memes.findAll({
+      db.Memes.findAll({
         where: { id: x }
       })
       .then((meme) => {

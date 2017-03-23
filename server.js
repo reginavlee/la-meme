@@ -13,6 +13,8 @@ const redisController = require('./app/controllers/redisController');
 const app = express();
 const port = 3000;
 
+const db = require('./app/models/index.js')
+
 app.use(morgan('dev'));
 app.use(helmet());
 app.use(bodyParser.json());
