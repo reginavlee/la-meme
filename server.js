@@ -8,7 +8,7 @@ const bodyParser = require('body-parser');
 const router = require('./routes');
 
 const socketController = require('./app/controllers/socketController');
-const redisController = require('./app/controllers/redisController');
+// const redisController = require('./app/controllers/redisController');
 
 const app = express();
 const port = 3000;
