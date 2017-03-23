@@ -16,10 +16,6 @@ const UserRoom = db.define('UserRoom', {
   score: Sequelize.INTEGER()
 });
 
-// const UserRoomScores = db.define('UserRoomScores', {
-//   roomScore: Sequelize.INTEGER()
-// })
-
 const Memes = db.define('Memes', {
   href: Sequelize.STRING()
 });
@@ -49,12 +45,6 @@ Rooms.sync()
   }, (err) => {
     console.log('An error occured while creating the Rooms table:', err)
   });
-// UserRoomScores.sync()
-//   .then((result) => {
-//     console.log('UserRoomScores synced')
-//   }, (err) => {
-//     console.log('An error occured while creating the UserRoomScores table:', err)
-//   });
 MemeCaptions.sync()
   .then((result) => {
     console.log('MemeCaptions synced')

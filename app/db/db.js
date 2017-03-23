@@ -1,7 +1,10 @@
 const Sequelize = require('sequelize');
+require('dotenv').config();
 
-// insert your url below based on how your connecting to postgres //
-const db = new Sequelize('postgres://nulqrvnq:jZF31njlNhHIp8OZXHqTjJtfvVk4t1Md@stampy.db.elephantsql.com:5432/nulqrvnq');
+const db = new Sequelize(`postgres://${process.env.RDS_USERNAME}:${process.env.RDS_PASSWORD}@${process.env.RDS_HOSTNAME}:${process.env.RDS_PORT}/lamemedb`, {
+  dialect: 'postgres',
+  protocol: 'postgres',
+})
 
 db.authenticate()
   .then(() => {
