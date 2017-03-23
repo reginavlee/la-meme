@@ -7,7 +7,7 @@ const Rooms = db.define('Rooms', {
 });
 
 const Users = db.define('Users', {
-  auth0Id: Sequelize.STRING(),
+  auth0ID: Sequelize.STRING(),
   topScore: Sequelize.INTEGER(),
   name: Sequelize.STRING()
 });
