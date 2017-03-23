@@ -1,41 +1,41 @@
 const Sequelize = require('sequelize');
 const db = require('../db/db');
-// const db = new Sequelize('postgres://nulqrvnq:jZF31njlNhHIp8OZXHqTjJtfvVk4t1Md@stampy.db.elephantsql.com:5432/nulqrvnq');
 
 // defining schemas
 const Rooms = db.define('Rooms', {
   name: Sequelize.STRING(),
 });
 
-const Users = db.define('Users', {
+const Users = db.define('User', {
   auth0Id: Sequelize.STRING(),
   topScore: Sequelize.INTEGER(),
   name: Sequelize.STRING()
 });
 
-const UsersRooms = db.define('UsersRooms');
+const UserRoom = db.define('UserRoom', {
+  score: Sequelize.INTEGER()
+});
 
-const User_Room_Scores = db.define('User_Room_Scores', {
-  roomScore: Sequelize.INTEGER()
-})
+// const UserRoomScores = db.define('UserRoomScores', {
+//   roomScore: Sequelize.INTEGER()
+// })
 
 const Memes = db.define('Memes', {
   href: Sequelize.STRING()
 });
 
-const Meme_Captions = db.define('Meme_Captions', {
+const MemeCaptions = db.define('MemeCaptions', {
   text: Sequelize.STRING(),
-  memeID: {
-    type: Sequelize.INTEGER(),
-    model: Memes,
-    key: 'id'
-  }
+  votes: Sequelize.INTEGER()
 });
 
-
-// // schema relationships
-Users.belongsToMany(Rooms, {through: 'UsersRooms'});
-Rooms.belongsToMany(Users, {through: 'UsersRooms'});
+// schema relationships
+Users.belongsToMany(Rooms, {through: 'UserRoom'});
+Rooms.belongsToMany(Users, {through: 'UserRoom'});
+Users.hasOne(MemeCaptions);
+MemeCaptions.belongsTo(Users);
+Memes.hasOne(MemeCaptions);
+MemeCaptions.belongsTo(Memes);
 
 Users.sync()
   .then((result) => {
@@ -49,17 +49,17 @@ Rooms.sync()
   }, (err) => {
     console.log('An error occured while creating the Rooms table:', err)
   });
-User_Room_Scores.sync()
+// UserRoomScores.sync()
+//   .then((result) => {
+//     console.log('UserRoomScores synced')
+//   }, (err) => {
+//     console.log('An error occured while creating the UserRoomScores table:', err)
+//   });
+MemeCaptions.sync()
   .then((result) => {
-    console.log('User_Room_Scores synced')
+    console.log('MemeCaptions synced')
   }, (err) => {
-    console.log('An error occured while creating the User_Room_Scores table:', err)
-  });
-Meme_Captions.sync()
-  .then((result) => {
-    console.log('Meme_Captions synced')
-  }, (err) => {
-    console.log('An error occured while creating the Meme_Captions table:', err)
+    console.log('An error occured while creating the MemeCaptions table:', err)
   });
 Memes.sync()
   .then((result) => {
@@ -67,33 +67,17 @@ Memes.sync()
   }, (err) => {
     console.log('An error occured while creating the Memes table:', err)
   });
-UsersRooms.sync()
+UserRoom.sync()
   .then((result) => {
-    console.log('UsersRooms synced')
+    console.log('UserRoom synced')
   }, (err) => {
-    console.log('An error occured while creating the UsersRooms table:', err)
+    console.log('An error occured while creating the UserRoom table:', err)
   });
-
-// Users.sync();
-// Rooms.sync();
-// User_Room_Scores.sync();
-// Memes.sync();
-// Meme_Captions.sync();
-
-
-
-// db.authenticate()
-//   .then(() => {
-//     console.log('Successful Connection to the database');
-//   })
-//   .catch((err) => {
-//     console.log('Cannot connect to the database due to:', err);
-//   });
 
 module.exports = {
   Rooms,
   Users,
-  User_Room_Scores,
-  Meme_Captions,
+  UserRoom,
+  MemeCaptions,
   Memes
 }
