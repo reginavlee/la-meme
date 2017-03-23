@@ -2,17 +2,27 @@
 
 // var app = require('../../server.js');
 const db = require('./db.js');
-const data = require('../../data/memephotos.json');
+const memeData = require('../../data/memephotos.json');
+const roomData = require('../../data/rooms.json')
 const Models = require('../models/index');
-
-console.log('models', Models);
-console.log('memes', Models.Memes)
 
 // to insert all photos from the data/memephotos.json file into the database
 const insertPhotos = () => {
-  for (let i = 0; i < data.length; i += 1) {
+  for (let i = 0; i < memeData.length; i += 1) {
     Models.Memes.create({
-      href: data[i].href
+      href: memeData[i].href
+    }).then((obj) => {
+      obj.save();
+    }).catch((err) => {
+      console.log(err);
+    });
+  }
+};
+
+const insertRooms = () => {
+  for (let i = 0; i < roomData.length; i += 1) {
+    Models.Rooms.create({
+      name: roomData[i].name
     }).then((obj) => {
       obj.save();
     }).catch((err) => {
@@ -22,6 +32,7 @@ const insertPhotos = () => {
 };
 
 insertPhotos();
+insertRooms();
 
 
 // to insert a single photo into the database (from the memephotos.json file)
@@ -36,4 +47,4 @@ Meme.create({
 });
 **/
 
-module.exports = db.Meme;
+// module.exports = db.Meme;
