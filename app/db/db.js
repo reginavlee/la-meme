@@ -1,10 +1,7 @@
 const Sequelize = require('sequelize');
 require('dotenv').config();
 
-const db = new Sequelize(`postgres://${process.env.RDS_USERNAME}:${process.env.RDS_PASSWORD}@${process.env.RDS_HOSTNAME}:${process.env.RDS_PORT}/lamemedb`, {
-  dialect: 'postgres',
-  protocol: 'postgres',
-})
+const db = new Sequelize(`postgres://${process.env.eSQL_USERNAME}:${process.env.eSQL_PASSWORD}@${process.env.eSQL_HOSTNAME}:${process.env.eSQL_PORT}/nulqrvnq`);
 
 db.authenticate()
   .then(() => {
