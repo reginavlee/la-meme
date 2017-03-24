@@ -1,5 +1,17 @@
 [
   {
-    
+    "auth0ID": 1550134,
+    "name": "Regina",
+    "topScore": 15
+  },
+  {
+    "auth0ID": 2958712,
+    "name": "Andrew",
+    "topScore": 12
+  },
+  {
+    "auth0ID": 31071723,
+    "name": "Armen",
+    "topScore": 17
   }
 ]

@@ -7,9 +7,9 @@ const Rooms = db.define('Rooms', {
 });
 
 const Users = db.define('Users', {
-  auth0ID: Sequelize.STRING(),
-  topScore: Sequelize.INTEGER(),
-  name: Sequelize.STRING()
+  auth0ID: Sequelize.INTEGER(),
+  name: Sequelize.STRING(),
+  topScore: Sequelize.INTEGER()
 });
 
 const UserRoom = db.define('UserRoom', {
@@ -26,6 +26,7 @@ const MemeCaptions = db.define('MemeCaptions', {
 });
 
 // schema relationships
+// BelongsTo will add the foreignKey on the source where hasOne will add on the target
 Users.belongsToMany(Rooms, {through: 'UserRoom'});
 Rooms.belongsToMany(Users, {through: 'UserRoom'});
 Users.hasMany(MemeCaptions);
@@ -68,6 +69,6 @@ module.exports = {
   Rooms,
   Users,
   UserRoom,
-  MemeCaptions,
-  Memes
+  Memes,
+  MemeCaptions
 }
