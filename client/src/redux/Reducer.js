@@ -13,8 +13,8 @@ const Initial_State = {
 export default (state = Initial_State, action) => {
   switch (action.type) {
     case types.MOUNT_APP:
-      return { ...state, mounted: true }
-
+      return { ...state, mounted: action.payload }
+      
     default:
       return state
   }
@@ -22,5 +22,5 @@ export default (state = Initial_State, action) => {
 
 // -------------- Action Creators ------------ //
 export const actions = {
-  dispatchMountAction: () => ({ type: types.MOUNT_APP })
+  dispatchMountAction: (val) => ({ type: types.MOUNT_APP, payload: val })
 }

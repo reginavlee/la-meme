@@ -52,11 +52,10 @@ function alreadyLoggedIn(nextState, replaceState) {
     replaceState({ nextPathname: nextState.location.pathname }, '/dashboard')
 }
 
-import { actions } from '../redux/lesson'
+import { actions } from '../redux/Reducer'
 
-@connect(store => ({
-  mounted: store.lesson.mounted,
-}))
+@connect(store => ({ mounted: store.reducer.mounted }))
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -86,7 +85,7 @@ class App extends Component {
     this.getUsersProfile();
     var _t = this;
     setTimeout(function() {
-      _t.props.dispatch(actions.dispatchMountAction())
+      _t.props.dispatch(actions.dispatchMountAction(10))
     }, 1500);
   }
   componentWillUpdate(nextProps, nextState) {
@@ -127,7 +126,7 @@ class App extends Component {
     return (
       <Router>
         <Grid fluid>
-          {this.props.mounted ? "mounted" : "not mounted"}
+          {this.props.mounted ? this.props.mounted : "not mounted"}
           <Navigation />
           <Row>
             <Col xs={12} md={8} mdOffset={1}>
