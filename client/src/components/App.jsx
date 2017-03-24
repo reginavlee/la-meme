@@ -48,7 +48,7 @@ function PublicRoute({ component: Component, authed, authService, login, ...rest
 
 // redirects from login to dash if user is already logged in
 function alreadyLoggedIn(nextState, replaceState) {
-  if(auth.loggedIn())
+  if (auth.loggedIn())
     replaceState({ nextPathname: nextState.location.pathname }, '/dashboard')
 }
 
