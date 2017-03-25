@@ -16,7 +16,7 @@ const upload = require('superagent')
       return (
           <div>
             <Dropzone onDrop={this.onDrop} multiple='true'>
-              <div>Try dropping a file here, or click to select a file to upload.</div>
+              <div>Upload three photos here to get your custom game started!</div>
             </Dropzone>
           </div>
       );

@@ -3,6 +3,7 @@ import { Col, Panel, Row, Image, Button } from 'react-bootstrap';
 
 import PlayerTable from './PlayerTable';
 import RoomsTable from './RoomsTable';
+import Dropper from './Dropper'
 
 const Dashboard = (props) => {
   const userProfile = props.profile ? props.profile : {};
@@ -36,6 +37,7 @@ const Dashboard = (props) => {
           </div>
         </Col>
       </Row>
+       <Dropper/>
       <Row>
         <Col md={6}>
           <Panel className="users">
