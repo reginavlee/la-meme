@@ -19,11 +19,11 @@ const upload = multer({
   },
 });
 
-router.post('/upload', upload.single('theseNamesMustMatch'), (req, res) => {
+router.post('/upload', upload.single('theseNamesMustMatch'), cors(), (req, res) => {
   // req.file is the 'theseNamesMustMatch' file
   s3.putObject({
     Bucket: 'lameme1',
-    Key: 'uploads',
+    Key: req.file.originalname,
     Body: req.file.buffer,
     ACL: 'public-read', // your permisions  
   }, (err) => {

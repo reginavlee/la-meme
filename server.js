@@ -15,6 +15,10 @@ const port = 3000;
 
 const db = require('./app/models/index.js')
 
+const dotenv = require('dotenv')
+
+dotenv.load();
+
 app.use(morgan('dev'));
 app.use(helmet());
 app.use(bodyParser.json());
