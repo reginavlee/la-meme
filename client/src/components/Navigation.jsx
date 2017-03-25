@@ -9,7 +9,6 @@ class Navigation extends Component {
     };
   }
   render() {
-    console.log(this.props);
     return (
       <Navbar inverse>
         <Navbar.Header>
