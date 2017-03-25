@@ -62,8 +62,15 @@ const insertMemeCaptions = () => {
   }
 };
 
+
+// const insertUploaded = (uploadURI) => {
+//   Models.MemeCaptions.create({
+
+//   })
+// }
+
 insertUsers();
 insertMemeCaptions();
-insertPhotos();
+// insertPhotos();
 insertRooms();
 
