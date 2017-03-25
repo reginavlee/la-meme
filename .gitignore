@@ -41,3 +41,4 @@ client/dist/*
 
 .env
 .keys
+.vscode/*

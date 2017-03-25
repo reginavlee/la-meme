@@ -18,9 +18,12 @@ module.exports = {
   memes: {
     // finds a random url from database. We have 50 pictures and the id numbering starts at 1
     get: (req, res) => {
+      const x = Math.ceil(Math.random() * 6);
       db.Memes.findAll({
+        where: { id: x }
       })
       .then((meme) => {
+        console.log('THE MEME BROASDFASDFASDFASDFASDFSDFASDFSDF', meme)
         res.send(meme[0].dataValues.href);
         res.end();
       })

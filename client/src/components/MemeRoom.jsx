@@ -2,13 +2,12 @@ import React from 'react';
 import { Grid, Row, Col } from 'react-bootstrap';
 import MemeRoomHeader from './MemeRoomHeader';
 import GameDisplay from './GameDisplay';
-import Dropper from './Dropper'
+
 
 const MemeRoom = (props) => {
   return (
   <div >
     <Grid>
-    <Dropper/>
       { /** props.intermission ? 'intermission' : 'not-intermission' **/}
       <MemeRoomHeader
         roomOccupancy={props.roomOccupancy}
