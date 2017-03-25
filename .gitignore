@@ -38,11 +38,6 @@ jspm_packages
 .node_repl_history
 
 client/dist/*
-<<<<<<< HEAD
 .vscode/*
 .env
-=======
-
-.env
 .keys
->>>>>>> gitignore more
